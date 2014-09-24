@@ -2,10 +2,23 @@
    to NATN as required in exercise 1. *)
 module type NATN = sig
   type t
-
+(*zero has the identity property that zero + t = t and zero * t = zero*)
   val zero : t
+(*one has the identity property that 1 * t = 1 unless t is 0*)
   val one : t
+(*(+) takes two ts and combines their ints 
+* (+) is associative: (a + b) + c = a + (b + c)
+* (+) is commutative: a + b = b + a
+* Identity is 0 -> 0 + t = t
+*)
   val ( + ) : t -> t -> t
+(*( * takes two ts and combines multiplies their ints 
+* ( * ) is associative: (a * b) * c = a * (b * c)
+* ( * ) is commutative: a * b = b * a
+* Identity is 1 -> 1 * t = t
+* multiplication is distributive over addition:
+* a * (b + c) = (a * b) + (a * c)
+*)
   val ( * ) : t -> t -> t 
   val ( < ) : t -> t -> bool
   val ( === ) : t -> t -> bool
