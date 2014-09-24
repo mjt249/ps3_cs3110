@@ -20,10 +20,47 @@ exception OutOfBounds
 let new_tree (r:region) : 'a quadtree = 
   Leaf (r, [])
         
-let rec insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
-  let object_is_in_bounds (an_r : region) (an_c : coord) = 
-    
-  if  
+
+
+let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
+  let object_is_in_bounds (an_r : region) (a_c : coord) : bool = 
+    ((fst (fst an_r) <= fst a_c) && (snd (fst an_r) <= snd a_c) &&
+    (fst (snd an_r) >= fst a_c) && (snd (snd an_r) >= snd a_c)) in
+
+  
+
+  let insert_to_leaf (leaf: 'a quadtree) (obj_coord : coord) (obj: 'a) =
+    let leaf_region = fst(leaf) in
+    let x0 = fst(fst leaf_region) in
+    let x1 = fst(snd leaf_region) in
+    let y0 = snd(fst leaf_region) in
+    let y1 = snd(snd leaf_region) in
+    let leaf_diag = sqrt((x1 - x0)**2.0 + (y1 - y0)**2.0) in
+    if (leaf_diag <= min_diagonal || List.length(snd leaf) <1) then
+      (obj_coord, s)::snd(leaf)
+    else
+      
+
+  if object_is_in_bounds (fst q) c then
+
+  let rec find_leaf (current_quadrent: 'a quadtree) : 'a quadtree =
+    match q with
+    | Leaf (r, coord_lst) -> insert_to_leaf q c s
+    | Node (r, one, two, three, four) ->
+     if object_is_in_bounds (fst one) c then
+       find_leaf one 
+     else if object_is_in_bounds (fst two) c then
+       find_leaf two
+     else if object_is_in_bounds (fst three) c then
+       find_leaf three
+     else object_is_in_bounds (fst four) c then
+       find_leaf four
+     in
+
+   find_leaf(q)
+
+  else raise OutOfBounds 
+  
 
   
 							      
