@@ -8,7 +8,7 @@ let min_diagonal = 0.0000001
 		     
 exception OutOfBounds
 
-let new_tree (r:region) : 'a quadtree = failwith "TODO"
+let new_tree (r:region) : 'a quadtree = failwith "TODOJLFEIJW FE"
         
 let rec insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree 
   = failwith "TODO"
