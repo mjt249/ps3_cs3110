@@ -16,6 +16,7 @@ let min_diagonal = 0.0000001
 		     
 exception OutOfBounds
 
+
 (*returns: a quad tree that is a leaf with given region r and no objects.*)
 let new_tree (r:region) : 'a quadtree = 
   Leaf (r, [])
