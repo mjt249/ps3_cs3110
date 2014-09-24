@@ -12,7 +12,7 @@ module type NATN = sig
 * Identity is 0 -> 0 + t = t
 *)
   val ( + ) : t -> t -> t
-(*( * takes two ts and combines multiplies their ints 
+(*( * )takes two ts and combines multiplies their ints 
 * ( * ) is associative: (a * b) * c = a * (b * c)
 * ( * ) is commutative: a * b = b * a
 * Identity is 1 -> 1 * t = t
@@ -28,6 +28,42 @@ module type NATN = sig
   val int_of_nat: t -> int
   val nat_of_int: int -> t
 end
+
+module IntNat : NATN = struct
+  type t = int
+  
+  let zero = 0
+  let one = 1
+  let ( + ) (t1: t) (t2: t) : t =
+    nat_of_int(int_of_nat(t1) + int_of_nat(t2))   
+
+  let ( * ) (t1: t) (t2: t) : t = 
+    nat_of_int(int_of_nat(t1) * int_of_nat(t2))   
+
+  let ( < ) (t1: t) (t2: t) : bool = 
+    int_of_nat(t1) < int_of_nat(t2)
+
+  let ( === ) (t1: t) (t2: t) : bool =
+    int_of_nat(t1) = int_of_nat(t2)
+
+
+
+  exception Unrepresentable
+
+  let int_of_nat x= 
+    if x <= 0 then (raise Unrepresentable)
+    else x
+
+  let nat_of_int x= 
+    if x >= max_int then (raise Unrepresentable)
+    else x 
+
+
+end
+
+
+
+
 
 module type AlienMapping = sig
   type aliensym
