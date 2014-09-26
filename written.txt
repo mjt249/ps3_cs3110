@@ -1,0 +1,34 @@
+
+Problem 1:
+  Exercise 1: Wait till office hours Sunday
+  Exercise 2: Wait till office hours Sunday
+
+
+Problem 2:
+  Exercise 1: Todo: 
+              insert (see notes in file). 
+
+              fold_quad () notes:   
+              let rec fold_left facc xs =
+                match xs with
+                [] -> acc
+                |x :: xs' -> fold_left f (facc x) xs'
+              let rec fold_quad
+                 leaf-> function acc (coord*b') (*objectlist*)
+                  |Node -> fold_quad(function(fold_quad_function(fold_Quad
+                   function 1st quad second quad ....)))
+
+   			   fold_region: check leaves and region for correct coordinantes. Test using exercise 2
+
+  Exercise 2: Todo: 
+              load_city_data: create tree and use parser to insert lines to tree
+
+              city_search: implement using variation of fold_region
+
+Problem 3:
+  Exercise 2: Todo: Test opperations to get errors to raise. Fix nat_of_int for zero and one
+
+  Exercise 3: Todo: Implement with protective check of NANT.length int conversion not going over max int. Do this for conversion, * and +
+
+  Exercise 4: Will wait till office hours Sunday to discuss
+  Exercise 5: Will wait till office hours Sunday to discuss

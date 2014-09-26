@@ -21,7 +21,7 @@ exception OutOfBounds
 let new_tree (r:region) : 'a quadtree = 
   Leaf (r, [])
         
-(*1) turn leaf to node
+(*1) Check before creating node
 2) which quad is A in? for First object
 3) which quat B  is in? Second object
 4) if A and B in same quad, repeat 1-3 with new quad
@@ -45,7 +45,8 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
      in
  
   let rec two_objects_dilema (reg: region) (A_object: coord*'a) (B_object: coord*'a) : 'a quadtree =
-       
+          (*check here*)
+       Node(reg, two_objcts_dilema(leaf())..etc
 
   let insert_to_leaf (leaf: 'a quadtree) (obj_coord : coord) (obj: 'a) :'a quadtree =
     let leaf_region = fst(leaf) in
@@ -57,10 +58,7 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
     if (leaf_diag <= min_diagonal || List.length(snd leaf) <1) then
        Leaf( fst(leaf), ((obj_coord, s)::snd(leaf)) )
     else
-      
-
-
-
+      two_objects_dilema
 
 
   if object_is_in_bounds (fst q) c then
