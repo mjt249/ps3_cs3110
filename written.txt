@@ -26,7 +26,7 @@ Problem 2:
               city_search: implement using variation of fold_region
 
 Problem 3:
-  Exercise 2: Todo: Test
+  Exercise 2: Todo: Test opperations to get errors to raise. Fix nat_of_int for zero and one
 
   Exercise 3: Todo: Implement with protective check of NANT.length int conversion not going over max int. Do this for conversion, * and +
 
