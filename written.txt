@@ -5,7 +5,7 @@ Problem 1:
 
 
 Problem 2:
-  Exercise 1: Todo: (WORKING ON INSERT)
+  Exercise 1: **INSERT COMPILES**
               insert (see notes in file). 
 
               fold_quad () notes:   
