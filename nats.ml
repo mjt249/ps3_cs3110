@@ -31,7 +31,15 @@ end
 
 module IntNat : NATN = struct
   type t = int
-  
+     exception Unrepresentable
+   let int_of_nat x= 
+     if x >= max_int then (raise Unrepresentable)
+    else x 
+
+  let nat_of_int x= 
+     if x < 0 then (raise Unrepresentable)
+    else x
+
   let zero = 0
   let one = 1
   let ( + ) (t1: t) (t2: t) : t =
@@ -45,20 +53,11 @@ module IntNat : NATN = struct
 
   let ( === ) (t1: t) (t2: t) : bool =
     int_of_nat(t1) = int_of_nat(t2)
-
-  exception Unrepresentable
-
-  let int_of_nat x= 
-     if x >= max_int then (raise Unrepresentable)
-    else x 
-
-  let nat_of_int x= 
-     if x < 0 then (raise Unrepresentable)
-    else x
-  
-
 end
 
+
+
+(*
   module ListNat : NATN = struct
 (* The list [a1; ...; an] represents the
 * natural number n. That is , the list lst represents
@@ -66,13 +65,13 @@ end
 * the list elements are irrelevant . *)
 type t = int list
 
-let NATN_of_int_list (il: int list) : NATN
+(* let NATN_of_int_list (il: int list) : NATN *)
 
 
 end
 
 
-
+*)
 
 
 
