@@ -36,8 +36,8 @@ Problem 3:
   Exercise 2: *COMPILES AND IS TESTED (except note on commit)*
  
 
-  Exercise 3: ***UNDER CONSTRUCTION****
-  Todo: Implement with protective check of NANT.length int conversion not going over max int. Do this for conversion, * and +
+  Exercise 3: **COMPILES AND IS TESTED***
+
 
   Exercise 4: Will wait till office hours Sunday to discuss
   Exercise 5: Will wait till office hours Sunday to discuss

@@ -5,7 +5,7 @@ open IntNat
 
 
 
-TEST_UNIT "IntNat" =
+TEST_UNIT "IntNat_and_ListNat" =
 let x = 3 in
 let y = 5 in
 let a = nat_of_int x in
@@ -58,6 +58,12 @@ let x = nat_of_int 5 in
 let y = nat_of_int 3 in
 let rslt = ( < ) x y in
 assert_false (rslt)
+
+
+
+
+
+
 
 
 let () = Pa_ounit_lib.Runtime.summarize() 
