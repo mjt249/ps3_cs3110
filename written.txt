@@ -23,6 +23,14 @@ Problem 2:
 
               **UNDERCONSTRUCTION**
    			   fold_region: check leaves and region for correct coordinantes. Test using exercise 2
+           what should we be checking though... 
+           1. whether a subtree is contained in the region?
+              bc that means we'll miss some subtree/leaves that are only partially inside the region.
+           2. whether a region is contained in the subtree?
+              well, if it is .. what do we do after that? we'll reach a point where the region is larger
+              than our subtrees... 
+           I think 1. is the way to go with this but I need to think a bit.
+
 
 
 
