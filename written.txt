@@ -40,9 +40,11 @@ Problem 2:
               city_search: implement using variation of fold_region
 
 Problem 3:
-  Exercise 2: Todo: Test opperations to get errors to raise. Fix nat_of_int for zero and one ****Working on this******
+  Exercise 2: *COMPILES AND IS TESTED (except note on commit)*
+ 
 
-  Exercise 3: Todo: Implement with protective check of NANT.length int conversion not going over max int. Do this for conversion, * and +
+  Exercise 3: ***UNDER CONSTRUCTION****
+  Todo: Implement with protective check of NANT.length int conversion not going over max int. Do this for conversion, * and +
 
   Exercise 4: Will wait till office hours Sunday to discuss
   Exercise 5: Will wait till office hours Sunday to discuss
