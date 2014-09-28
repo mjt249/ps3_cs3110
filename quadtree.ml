@@ -127,7 +127,7 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
 					      
 let rec fold_quad (f: 'a -> (coord * 'b)  -> 'a)
 		  (a: 'a) (t: 'b quadtree): 'a 
-  =
+=
   match t with
    Leaf (reg, obj_lst) -> List.fold_left f a obj_lst
   |Node (reg, one, two, three, four) -> 
@@ -136,5 +136,16 @@ let rec fold_quad (f: 'a -> (coord * 'b)  -> 'a)
 let rec fold_region (f: 'a -> coord * 'b -> 'a) (a : 'a) (t : 'b quadtree) 
   (r : region) : 'a
 =
-  failwith "TODO"
+  let acc_obj_tuple (acc: (coord * 'b) list) (obj_tuple: coord * 'b) : (coord * 'b) list =
+    obj_tuple :: acc in
+  let all_obj_lst = fold_quad acc_obj_tuple [] t in
+
+  let tuple_is_in_bounds (an_r: region) (a_tuple: coord * 'b) : bool =
+    let a_c = fst a_tuple in 
+    ((fst (fst an_r) <= fst a_c) && (snd (fst an_r) <= snd a_c) &&
+    (fst (snd an_r) >= fst a_c) && (snd (snd an_r) >= snd a_c)) in
+    
+  let objects_within_r = List.filter (tuple_is_in_bounds r) all_obj_lst in
+
+  List.fold_left f a objects_within_r
 
