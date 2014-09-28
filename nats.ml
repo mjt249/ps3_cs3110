@@ -20,7 +20,9 @@ module type NATN = sig
 * a * (b + c) = (a * b) + (a * c)
 *)
   val ( * ) : t -> t -> t 
+  (*If a is < b then true, else false*)
   val ( < ) : t -> t -> bool
+  (*if a is = to b then true, else false*)
   val ( === ) : t -> t -> bool
 			    
   exception Unrepresentable
@@ -32,19 +34,19 @@ end
 module IntNat : NATN = struct
   type t = int
      exception Unrepresentable
-   let int_of_nat x= 
+   let int_of_nat (x : t) : int= 
      if x >= max_int then (raise Unrepresentable)
     else x 
 
-  let nat_of_int x= 
+  let nat_of_int (x : int) : t= 
      if x < 0 then (raise Unrepresentable)
     else x
 
-  let zero = 0
-  let one = 1
+  let zero : t = 0
+  let one : t = 1
   let ( + ) (t1: t) (t2: t) : t =
     nat_of_int(int_of_nat(t1) + int_of_nat(t2))   
-
+ 
   let ( * ) (t1: t) (t2: t) : t = 
     nat_of_int(int_of_nat(t1) * int_of_nat(t2))   
 
@@ -57,21 +59,51 @@ end
 
 
 
-(*
-  module ListNat : NATN = struct
+
+module ListNat : NATN = struct
 (* The list [a1; ...; an] represents the
 * natural number n. That is , the list lst represents
 * length ( lst ). The empty list represents 0. The values of
 * the list elements are irrelevant . *)
-type t = int list
+  type t = int list
+  exception Unrepresentable
+  let one : t = [1]
+  let zero : t = []
+  let int_of_nat (x : t) : int =
+      List.length(x)
 
-(* let NATN_of_int_list (il: int list) : NATN *)
+  let rec add_x_to_length (current :int) (lst: t) : t =
+    if (current <= 0) then lst
+    else 
+      add_x_to_length (current - 1) (1 :: lst) 
+      
+  let nat_of_int (x : int) : t =
+    if x < 0 then (raise Unrepresentable) else
+      add_x_to_length x []
+      
+  let ( + ) (t1: t) (t2: t) : t =
+    if ((List.length(t1) + List.length(t2)) >= max_int)
+      then (raise Unrepresentable)
+    else 
+      add_x_to_length (List.length(t2)) t1
 
+  let ( * ) (t1: t) (t2: t) : t =
+    let product = (List.length(t1) * List.length(t2)) in
+    if(product >= max_int)
+      then (raise Unrepresentable)
+    else 
+      add_x_to_length (product - (List.length(t1))) t1
+
+  let ( < ) (t1: t) (t2: t) : bool =
+    (List.length(t1)) < (List.length(t2))
+
+  let ( === ) (t1: t) (t2: t) : bool =
+    (List.length(t1)) = (List.length(t2))
 
 end
 
 
-*)
+
 
 
 
