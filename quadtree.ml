@@ -124,14 +124,15 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
 
   else raise OutOfBounds 
   
-
-  
-							      
+					      
 let rec fold_quad (f: 'a -> (coord * 'b)  -> 'a)
 		  (a: 'a) (t: 'b quadtree): 'a 
   =
-  failwith "TODO"
-	   
+  match t with
+   Leaf (reg, obj_lst) -> List.fold_left f a obj_lst
+  |Node (reg, one, two, three, four) -> 
+    fold_quad f ( fold_quad f ( fold_quad f (fold_quad f a four) three ) two ) one
+
 let rec fold_region (f: 'a -> coord * 'b -> 'a) (a : 'a) (t : 'b quadtree) 
   (r : region) : 'a
 =
