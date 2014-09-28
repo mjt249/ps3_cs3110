@@ -18,7 +18,11 @@ Problem 2:
                   |Node -> fold_quad(function(fold_quad_function(fold_Quad
                    function 1st quad second quad ....)))
 
+
+              **UNDERCONSTRUCTION**
    			   fold_region: check leaves and region for correct coordinantes. Test using exercise 2
+
+
 
   Exercise 2: Todo: 
               load_city_data: create tree and use parser to insert lines to tree
