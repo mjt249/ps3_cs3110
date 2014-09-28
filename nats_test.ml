@@ -35,10 +35,29 @@ let x = nat_of_int 3 in
 let y = nat_of_int 5 in
 let rslt = ( * ) x y in
 assert_true ((int_of_nat rslt)  = 15)
-let x = nat_of_int 461168601 in
+(* let x = nat_of_int 461168601 in
 let y = nat_of_int 461168602 in
-assert_raises (Some Unrepresentable) (( * ) x y)
-
+assert_raises (Some Unrepresentable) (( * ) x y) *)
+let x = nat_of_int 3 in
+let y = nat_of_int 5 in
+let rslt = ( === ) x y in
+assert_false (rslt)
+let x = nat_of_int 3 in
+let y = nat_of_int 3 in
+let rslt = ( === ) x y in
+assert_true (rslt)
+let x = nat_of_int 3 in
+let y = nat_of_int 3 in
+let rslt = ( < ) x y in
+assert_false (rslt)
+let x = nat_of_int 3 in
+let y = nat_of_int 5 in
+let rslt = ( < ) x y in
+assert_true (rslt)
+let x = nat_of_int 5 in
+let y = nat_of_int 3 in
+let rslt = ( < ) x y in
+assert_false (rslt)
 
 
 let () = Pa_ounit_lib.Runtime.summarize() 
