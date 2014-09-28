@@ -6,19 +6,8 @@ Problem 1:
 
 Problem 2:
   Exercise 1: **INSERT COMPILES**
-              insert (see notes in file). 
-
-              fold_quad () notes:   
-              let rec fold_left facc xs =
-                match xs with
-                [] -> acc
-                |x :: xs' -> fold_left f (facc x) xs
 
               **FOLD_QUAD COMPILES** 
-              let rec fold_quad
-                 leaf-> function acc (coord*b') (*objectlist*)
-                  |Node -> fold_quad(function(fold_quad_function(fold_Quad
-                   function 1st quad second quad ....)))
 
 
               **UNDERCONSTRUCTION**
@@ -30,6 +19,10 @@ Problem 2:
               well, if it is .. what do we do after that? we'll reach a point where the region is larger
               than our subtrees... 
            I think 1. is the way to go with this but I need to think a bit.
+
+           OR
+
+           Can we fold the tree to get all objects in a list. run that list and see if they're in a region?
 
 
 
