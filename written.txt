@@ -1,7 +1,7 @@
 
 Problem 1:
-  Exercise 1: Wait till office hours Sunday
-  Exercise 2: Wait till office hours Sunday
+  Exercise 1: **...SYNTAX OF "TYPE CHECKING RULE" ?? WHAT?**
+  Exercise 2: **SEEMS DOABLE**
 
 
 Problem 2:
@@ -13,23 +13,15 @@ Problem 2:
               **FOLD_REGION COMPILES**
 
 
-
-
-                              **city_search.ml isn't compiling for me :( (Jay) **
-
-  Exercise 2: Todo: 
-              load_city_data: create tree and use parser to insert lines to tree
-
-              **WRITTEN BUT NOT TESTED **
-              **(pulled from origin master but wouldn't compile, so testing will be done later)**
-              city_search: implement using variation of fold_region
+  Exercise 2: **COMPILES. STILL NEED TESTING**
 
 Problem 3:
   Exercise 2: *COMPILES AND IS TESTED (except note on commit)*
  
 
   Exercise 3: **COMPILES AND IS TESTED***
+              
 
-
-  Exercise 4: Will wait till office hours Sunday to discuss
-  Exercise 5: Will wait till office hours Sunday to discuss
+  Exercise 4: **KARMA PROBLEM WILL WAIT UNTIL EVERYTHING ELSE IS DONE**
+              **WE HAVE THE SIMPLE SOLUTION**
+  Exercise 5: **ONLY ASKED TO IMPLEMENT THE FUNCTOR. SEEMS DOABLE.**
