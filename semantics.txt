@@ -1,3 +1,14 @@
+1 
+(a)
+
+if e0 then e1 else e2
+
+if (e0 : int) and (e1 : 'a) and (e1: 'a)
+e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a.
+
+(b)
+
+
 let x = 1 in
 let f = fun y ->
 (let x = y+1 in
