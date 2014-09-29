@@ -8,6 +8,8 @@ e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a.
 
 (b)
 
+int -> int -> int
+
 
 let x = 1 in
 let f = fun y ->
