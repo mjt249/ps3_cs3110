@@ -31,6 +31,7 @@ module type NATN = sig
   val nat_of_int: int -> t
 end
 
+
 module IntNat : NATN = struct
   type t = int
      exception Unrepresentable
@@ -104,6 +105,10 @@ end
 
 
 
+module NatConvertFn ( N : NATN ) = struct
+let int_of_nat (n : N.t ): int = N.int_of_nat(n)
+let nat_of_int (n : int ): N.t = N.nat_of_int(n)
+end
 
 
 
