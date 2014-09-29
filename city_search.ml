@@ -22,4 +22,10 @@ let load_city_data (s:string) : string quadtree =
 
 
 let city_search (q: string quadtree) (r : region) : string list = 
-	failwith "TODO"
+  let add_city_strings (lst: string list) (city_tuple: coord * string) : string list =
+    let city = snd city_tuple in
+    let coord_of_city = fst city_tuple in
+    let latitude = string_of_float(fst coord_of_city) in
+    let longitude = string_of_float(snd coord_of_city) in
+    (latitude^","^longitude^","^city)::lst in
+  fold_region add_city_strings [] q r
