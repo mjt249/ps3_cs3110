@@ -15,9 +15,13 @@ Problem 2:
 
 
 
+                              **city_search.ml isn't compiling for me :( (Jay) **
+
   Exercise 2: Todo: 
               load_city_data: create tree and use parser to insert lines to tree
 
+              **WRITTEN BUT NOT TESTED **
+              **(pulled from origin master but wouldn't compile, so testing will be done later)**
               city_search: implement using variation of fold_region
 
 Problem 3:
