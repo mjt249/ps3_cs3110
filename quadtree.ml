@@ -43,7 +43,7 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
   * returns which quad the coords are in*)
   let quad_of_coords (node: 'a quadtree) (coords: coord) : string =
     match node with
-    Node (r, one, two, three, four) ->
+     Node (r, one, two, three, four) ->
       if object_is_in_bounds (get_region one) c then
         "I"
       else if object_is_in_bounds (get_region two) c then
@@ -52,14 +52,14 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
         "III"
       else
         "IV"  
-    |Leaf ( _, _) -> raise (PreconditionNotMet "quad_of_coords wants a Node") in
+    |Leaf (_, _) -> raise (PreconditionNotMet "quad_of_coords wants a Node") in
 
   (*I made insert_to_leaf recursive because we need that base case again. 
     basically the else clause still has what we wanted for "two_objects_dilemma 
     but insert_to_leaf is the recursive function because we need to check for the
     diagonal each time."*)
   (*if leaf has less than mindiag or no obj, insert. otherwise, split it up one level.*)
-  let rec insert_to_leaf (leaf: 'a quadtree) (obj_coord : coord) (obj: 'a) :'a quadtree =
+  let rec insert_to_leaf (leaf: 'a quadtree) :'a quadtree =
     let leaf_region = get_region leaf in
     let x0 = fst(fst leaf_region) in
     let x1 = fst(snd leaf_region) in
@@ -68,8 +68,8 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
     let leaf_diag = sqrt((x1 -. x0)**2.0 +. (y1 -. y0)**2.0) in
     (*leaf has no objects, or can't be split up anymore.*)
     if (leaf_diag <= min_diagonal || List.length(get_obj_list leaf) <1) then
-       Leaf( (get_region leaf), ((obj_coord, s)::(get_obj_list leaf)))
-    (*leaf has an object and can be split up*)
+       Leaf((get_region leaf), (c, s)::(get_obj_list leaf))
+    (*leaf has an object and can be split up.*)
     else
       (*make a node with four leafs out of the original leaf. no objects are in it.*)
       let new_node = Node (leaf_region, 
@@ -81,7 +81,7 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
       let tuple_in_leaf = List.hd(get_obj_list leaf) in
       (*the strings that represent the quad that the objects are in*)
       let quad_of_original_obj = quad_of_coords new_node (fst(tuple_in_leaf)) in
-      let quad_of_inserting_obj =  quad_of_coords new_node obj_coord in
+      let quad_of_inserting_obj =  quad_of_coords new_node c in
       (*inserts the original object in the right quadtree leaf
         requires a Node with four leaves*)
       let original_obj_inserted (node: 'a quadtree) (quad_string: string)= 
@@ -103,22 +103,22 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
             insert_to_leaf does that for us in the if statement (check if leaf has
             and object already.) so i just call insert_to_leaf on the right leaf.*)
         match quad_of_inserting_obj with
-        |"I" -> Node (reg, (insert_to_leaf one obj_coord obj), two, three, four)
-        |"II" -> Node (reg, one, (insert_to_leaf two obj_coord obj), three, four)
-        |"III" -> Node (reg, one, two, (insert_to_leaf three obj_coord obj), four)
-        | _ -> Node (reg, one, two, three, (insert_to_leaf four obj_coord obj))in
+        |"I" -> Node (reg, (insert_to_leaf one), two, three, four)
+        |"II" -> Node (reg, one, (insert_to_leaf two), three, four)
+        |"III" -> Node (reg, one, two, (insert_to_leaf three), four)
+        | _ -> Node (reg, one, two, three, (insert_to_leaf four))in
 
   if object_is_in_bounds (get_region q) c then
   (*obj is in bounds so find the leaf it is a part of.*)
   let rec find_leaf (current_quadrent: 'a quadtree) : 'a quadtree =
-    match q with
-      Leaf (r, coord_lst) -> insert_to_leaf q c s
-    | Node (r, one, two, three, four) ->
-         (match (quad_of_coords q c) with
-          |"I" -> Node(r, (find_leaf one), two, three, four) 
-          |"II" -> Node(r, one, (find_leaf two), three, four) 
-          |"III" ->  Node(r, one, two, (find_leaf three), four)
-          | _ ->  Node(r, one, two, three, (find_leaf four)) ) in
+    match current_quadrent with
+     Leaf (r, coord_lst) -> insert_to_leaf current_quadrent
+    |Node (r, one, two, three, four) ->
+      match (quad_of_coords current_quadrent c) with
+      |"I" -> Node(r, (find_leaf one), two, three, four) 
+      |"II" -> Node(r, one, (find_leaf two), three, four) 
+      |"III" ->  Node(r, one, two, (find_leaf three), four)
+      | _ ->  Node(r, one, two, three, (find_leaf four))  in
 
    find_leaf(q)
 
@@ -144,7 +144,7 @@ let rec fold_region (f: 'a -> coord * 'b -> 'a) (a : 'a) (t : 'b quadtree)
     let a_c = fst a_tuple in 
     ((fst (fst an_r) <= fst a_c) && (snd (fst an_r) <= snd a_c) &&
     (fst (snd an_r) >= fst a_c) && (snd (snd an_r) >= snd a_c)) in
-    
+
   let objects_within_r = List.filter (tuple_is_in_bounds r) all_obj_lst in
 
   List.fold_left f a objects_within_r
