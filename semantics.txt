@@ -1,0 +1,13 @@
+let x = 1 in
+let f = fun y ->
+(let x = y+1 in
+fun z -> x+y+z) in
+let x = 3 in 
+let g = f 4 in 
+let y = 5 in 
+let z = g 6 in 
+z
+
+
+First let binds x to 1, creating environment {x=1}.
+Second let binds f to << fun y -> ()>>
