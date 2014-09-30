@@ -20,7 +20,9 @@ module type NATN = sig
 * a * (b + c) = (a * b) + (a * c)
 *)
   val ( * ) : t -> t -> t 
+  (*If a is < b then true, else false*)
   val ( < ) : t -> t -> bool
+  (*if a is = to b then true, else false*)
   val ( === ) : t -> t -> bool
 			    
   exception Unrepresentable
@@ -28,53 +30,6 @@ module type NATN = sig
   val int_of_nat: t -> int
   val nat_of_int: int -> t
 end
-
-module IntNat : NATN = struct
-  type t = int
-     exception Unrepresentable
-   let int_of_nat x= 
-     if x >= max_int then (raise Unrepresentable)
-    else x 
-
-  let nat_of_int x= 
-     if x < 0 then (raise Unrepresentable)
-    else x
-
-  let zero = 0
-  let one = 1
-  let ( + ) (t1: t) (t2: t) : t =
-    nat_of_int(int_of_nat(t1) + int_of_nat(t2))   
-
-  let ( * ) (t1: t) (t2: t) : t = 
-    nat_of_int(int_of_nat(t1) * int_of_nat(t2))   
-
-  let ( < ) (t1: t) (t2: t) : bool = 
-    int_of_nat(t1) < int_of_nat(t2)
-
-  let ( === ) (t1: t) (t2: t) : bool =
-    int_of_nat(t1) = int_of_nat(t2)
-end
-
-
-
-(*
-  module ListNat : NATN = struct
-(* The list [a1; ...; an] represents the
-* natural number n. That is , the list lst represents
-* length ( lst ). The empty list represents 0. The values of
-* the list elements are irrelevant . *)
-type t = int list
-
-(* let NATN_of_int_list (il: int list) : NATN *)
-
-
-end
-
-
-*)
-
-
-
 
 
 module type AlienMapping = sig
@@ -97,3 +52,69 @@ let sum_overflows (i1:int) (i2:int) : bool =
    types specified in the problem set. *)
 
 
+
+module IntNat : NATN = struct
+  type t = int
+     exception Unrepresentable
+   let int_of_nat (x : t) : int= 
+     if x >= max_int then (raise Unrepresentable)
+    else x 
+
+  let nat_of_int (x : int) : t= 
+     if x < 0 then (raise Unrepresentable)
+    else x
+
+  let zero : t = 0
+  let one : t = 1
+  let ( + ) (t1: t) (t2: t) : t =
+    nat_of_int(int_of_nat(t1) + int_of_nat(t2))   
+ 
+  let ( * ) (t1: t) (t2: t) : t = 
+    nat_of_int(int_of_nat(t1) * int_of_nat(t2))   
+
+  let ( < ) (t1: t) (t2: t) : bool = 
+    int_of_nat(t1) < int_of_nat(t2)
+
+  let ( === ) (t1: t) (t2: t) : bool =
+    int_of_nat(t1) = int_of_nat(t2)
+end
+
+
+
+
+module ListNat : NATN = struct
+(* The list [a1; ...; an] represents the
+* natural number n. That is , the list lst represents
+* length ( lst ). The empty list represents 0. The values of
+* the list elements are irrelevant . *)
+  type t = int list
+  exception Unrepresentable
+  let one : t = [1]
+  let zero : t = []
+  (*could be longer that max_int which would be unrepresentable.*)
+  let int_of_nat (x : t) : int =
+    if List.length(x) < max_int then List.length(x) else Unrepresentable
+
+  let rec add_x_to_length (current :int) (lst: t) : t =
+    if (current <= 0) then lst
+    else 
+      add_x_to_length (current - 1) (1 :: lst) 
+      
+  let nat_of_int (x : int) : t =
+    if x < 0 then (raise Unrepresentable) else
+      add_x_to_length x []
+      
+  let ( + ) (t1: t) (t2: t) : t =
+    add_x_to_length (List.length(t2)) t1
+
+  let ( * ) (t1: t) (t2: t) : t =
+    let product = (List.length(t1) * List.length(t2)) in
+      add_x_to_length (product - (List.length(t1))) t1i
+
+  let ( < ) (t1: t) (t2: t) : bool =
+    (List.length(t1)) < (List.length(t2))
+
+  let ( === ) (t1: t) (t2: t) : bool =
+    (List.length(t1)) = (List.length(t2))
+
+end

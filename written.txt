@@ -1,34 +1,27 @@
 
 Problem 1:
-  Exercise 1: Wait till office hours Sunday
-  Exercise 2: Wait till office hours Sunday
+  Exercise 1: **...SYNTAX OF "TYPE CHECKING RULE" ?? WHAT?**
+  Exercise 2: **SEEMS DOABLE**
 
 
 Problem 2:
-  Exercise 1: Todo: 
-              insert (see notes in file). 
+  Exercise 1: **INSERT COMPILES**
 
-              fold_quad () notes:   
-              let rec fold_left facc xs =
-                match xs with
-                [] -> acc
-                |x :: xs' -> fold_left f (facc x) xs'
-              let rec fold_quad
-                 leaf-> function acc (coord*b') (*objectlist*)
-                  |Node -> fold_quad(function(fold_quad_function(fold_Quad
-                   function 1st quad second quad ....)))
+              **FOLD_QUAD COMPILES** 
 
-   			   fold_region: check leaves and region for correct coordinantes. Test using exercise 2
 
-  Exercise 2: Todo: 
-              load_city_data: create tree and use parser to insert lines to tree
+              **FOLD_REGION COMPILES**
 
-              city_search: implement using variation of fold_region
+
+  Exercise 2: **COMPILES. STILL NEED TESTING**
 
 Problem 3:
-  Exercise 2: Todo: Test opperations to get errors to raise. Fix nat_of_int for zero and one ****Working on this******
+  Exercise 2: *COMPILES AND IS TESTED (except note on commit)*
+ 
 
-  Exercise 3: Todo: Implement with protective check of NANT.length int conversion not going over max int. Do this for conversion, * and +
+  Exercise 3: **COMPILES AND IS TESTED***
+              
 
-  Exercise 4: Will wait till office hours Sunday to discuss
-  Exercise 5: Will wait till office hours Sunday to discuss
+  Exercise 4: **KARMA PROBLEM WILL WAIT UNTIL EVERYTHING ELSE IS DONE**
+              **WE HAVE THE SIMPLE SOLUTION**
+  Exercise 5: **ONLY ASKED TO IMPLEMENT THE FUNCTOR. SEEMS DOABLE.**
