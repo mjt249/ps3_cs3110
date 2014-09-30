@@ -31,7 +31,6 @@ module type NATN = sig
   val nat_of_int: int -> t
 end
 
-
 module type AlienMapping = sig
   type aliensym
 
@@ -50,8 +49,6 @@ let sum_overflows (i1:int) (i2:int) : bool =
 (* Add your solution here for IntNat, ListNat, NatConvertFn, 
    and AlienNatFn, being careful to use the declarations and
    types specified in the problem set. *)
-
-
 
 module IntNat : NATN = struct
   type t = int
@@ -118,3 +115,12 @@ module ListNat : NATN = struct
     (List.length(t1)) = (List.length(t2))
 
 end
+
+
+
+module NatConvertFn ( N : NATN ) = struct
+let int_of_nat (n : N.t ): int = N.int_of_nat(n)
+let nat_of_int (n : int ): N.t = N.nat_of_int(n)
+end
+
+
