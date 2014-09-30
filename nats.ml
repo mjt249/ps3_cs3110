@@ -125,20 +125,22 @@ let int_of_nat (n : N.t ): int = N.int_of_nat(n)
 let nat_of_int (n : int ): N.t = N.nat_of_int(n)
 end
 
-
-(*module AlienNatFn (M: AlienMapping): NATN = struct 
+(*We need to deal with what happens when M.int_of_aliensym returns something more than max_int*)
+(*Idea for testing: create int_of_aliensym such that everything is shifted +1 int?*)
+module AlienNatFn (M: AlienMapping): NATN = struct 
   type t = M.aliensym list
   let zero : t = [M.zero]
   let one : t = [M.one]
-  let addition (acc : t) (el : M.aliensym) = 
-    el::acc
-  let ( + ) (t1: t) (t2: t) :t = 
-    List.fold_left addition t1 t2
-  let ( * ) =
-  let ( < ) =
-  let ( === ) =
-  let int_of_nat =
-  let nat_of_int =
+  let addition (acc : t) (el : M.aliensym) = el::acc
+  let ( + ) (t1: t) (t2: t) :t =  List.fold_left addition t1 t2
+  let rec multiply (multiplier_t2: int) (lst : t) : t =
+      if (multiplier_t2 <= 0) then lst 
+      else multiply (multiplier_t2 - 1) (List.fold_left addition lst t1
+  let ( * ) (t1: t) (t2: t) :t =  multiply (int_of_nat(t2)) t1
+  let ( < ) (t1: t) (t2: t) :bool= (int_of_nat(t1) < int_of_nat(t2))
+  let ( === ) (t1: t) (t2: t) :bool = (int_of_nat(t1) = int_of_nat(t2))
+  let int_of_nat (t1: t) : int = List.fold_left ( + ) 0 (List.map M.int_of_aliensym t1)
+  let nat_of_int = (*My idea is to make a list of ones...?*)
 
-end *)
+end 
 
