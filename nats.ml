@@ -90,7 +90,9 @@ module ListNat : NATN = struct
   let zero : t = []
   (*could be longer that max_int which would be unrepresentable.*)
   let int_of_nat (x : t) : int =
-    if List.length(x) < max_int then List.length(x) else Unrepresentable
+    if List.length(x) < max_int then List.length(x) 
+    else 
+      (raise Unrepresentable)
 
   let rec add_x_to_length (current :int) (lst: t) : t =
     if (current <= 0) then lst
@@ -106,7 +108,7 @@ module ListNat : NATN = struct
 
   let ( * ) (t1: t) (t2: t) : t =
     let product = (List.length(t1) * List.length(t2)) in
-      add_x_to_length (product - (List.length(t1))) t1i
+      add_x_to_length (product - (List.length(t1))) t1
 
   let ( < ) (t1: t) (t2: t) : bool =
     (List.length(t1)) < (List.length(t2))
@@ -123,4 +125,20 @@ let int_of_nat (n : N.t ): int = N.int_of_nat(n)
 let nat_of_int (n : int ): N.t = N.nat_of_int(n)
 end
 
+
+(*module AlienNatFn (M: AlienMapping): NATN = struct 
+  type t = M.aliensym list
+  let zero : t = [M.zero]
+  let one : t = [M.one]
+  let addition (acc : t) (el : M.aliensym) = 
+    el::acc
+  let ( + ) (t1: t) (t2: t) :t = 
+    List.fold_left addition t1 t2
+  let ( * ) =
+  let ( < ) =
+  let ( === ) =
+  let int_of_nat =
+  let nat_of_int =
+
+end *)
 
