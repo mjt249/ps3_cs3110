@@ -55,8 +55,7 @@ module IntNat : NATN = struct
   type t = int
      exception Unrepresentable
    let int_of_nat (x : t) : int= 
-     if x >= max_int then (raise Unrepresentable)
-    else x 
+     x
 
   let nat_of_int (x : int) : t= 
      if x < 0 then (raise Unrepresentable)
@@ -64,11 +63,32 @@ module IntNat : NATN = struct
 
   let zero : t = 0
   let one : t = 1
+  
+
+  (*neither of the two arguments have experienced overflow themselves.*)
+  (*raise unrepresentable if result is larger than max_int*)
   let ( + ) (t1: t) (t2: t) : t =
-    nat_of_int(int_of_nat(t1) + int_of_nat(t2))   
- (*Need to add recursivly to prevent overflow*)
+
+    let int_t1 = int_of_nat t1 in
+    let int_t2 = int_of_nat t2 in
+    if (sum_overflows int_t1 int_t2) then (raise Unrepresentable)
+    else
+      nat_of_int(int_t1 + int_t2)
+
+
+ 
+  (*neither of the two arguments have experienced overflow thenselves.*)
+  (*raise unrepresentable if result is larger than max_int*)
+
   let ( * ) (t1: t) (t2: t) : t = 
-    nat_of_int(int_of_nat(t1) * int_of_nat(t2))   
+    if (t1 = zero || t2 = zero) then zero
+    else
+      let rec multiply_helper (fst: t) (snd: t) (prod: t) : t = 
+        if (fst = zero) then prod
+        else
+          multiply_helper (nat_of_int((int_of_nat fst) -1)) snd (snd + prod) in
+      multiply_helper t1 t2 zero
+
 
   let ( < ) (t1: t) (t2: t) : bool = 
     int_of_nat(t1) < int_of_nat(t2)
@@ -91,52 +111,80 @@ module ListNat : NATN = struct
   let zero : t = []
   (*could be longer that max_int which would be unrepresentable.*)
   let int_of_nat (x : t) : int =
-    if List.length(x) < max_int then List.length(x) 
-    else 
-      (raise Unrepresentable)
+    let rec int_of_nat_helper (lst: t) (counter: int) : int =
+      if (counter < 0) then (raise Unrepresentable)
+      else  
+        match lst with
+         [] -> counter
+        |hd::tail -> int_of_nat_helper tail (counter + 1) in
+    int_of_nat_helper x 0
 
-  let rec add_x_to_length (current :int) (lst: t) : t =
+  let rec add_int_to_length (current :int) (lst: t) : t =
     if (current <= 0) then lst
     else 
-      add_x_to_length (current - 1) (1 :: lst) 
+      add_int_to_length (current - 1) (1 :: lst) 
+
+
+  (*this one is specifically for adding lists together. 
+    lists might be longer than max_int, which would be impossible
+    to add with add_x_to_length*)
+  let rec add_list_to_length (current_list :t) (lst: t) : t =
+    match current_list with
+     [] -> lst
+    |hd::tail -> add_list_to_length tail (1::lst)
       
   let nat_of_int (x : int) : t =
     if x < 0 then (raise Unrepresentable) else
-      add_x_to_length x []
+      add_int_to_length x []
       
+  (*uses add_list_to_length now*)    
   let ( + ) (t1: t) (t2: t) : t =
-    add_x_to_length (List.length(t2)) t1
+    add_list_to_length t2 t1
 
   let ( * ) (t1: t) (t2: t) : t =
-    let product = (List.length(t1) * List.length(t2)) in
-      add_x_to_length (product - (List.length(t1))) t1
+    let rec product_helper (first: t) (second: t) (product: t) : t =
+      match first with
+       [] -> product
+      |hd::tail -> product_helper tail second (add_list_to_length t2 product) in
+    product_helper t1 t2 []
+
+  let rec compare_length (t1: t) (t2: t) : int =
+    match t1, t2 with
+      [], [] -> 0
+    | [], hd::tl -> 1 (*second list longer*)
+    | hd::tl, [] -> -1 (*first list longer*)
+    | hd1::tl1, hd2::tl2 -> compare_length tl1 tl2  
 
   let ( < ) (t1: t) (t2: t) : bool =
-    (List.length(t1)) < (List.length(t2))
+    (compare_length t1 t2) = 1
 
   let ( === ) (t1: t) (t2: t) : bool =
-    (List.length(t1)) = (List.length(t2))
+    (compare_length t1 t2) = 0
 
 end
 
 
 
 module NatConvertFn ( N : NATN ) = struct
-let int_of_nat (n : N.t ): int = N.int_of_nat(n)
-let nat_of_int (n : int ): N.t = N.nat_of_int(n)
+
+  let int_of_nat (n : N.t ): int = N.int_of_nat(n)
+  let nat_of_int (n : int ): N.t = N.nat_of_int(n)
+
 end
 
 (*We need to deal with what happens when M.int_of_aliensym returns something more than max_int*)
-(*Idea for testing: create int_of_aliensym such that everything is shifted +1 int?*)
-module AlienNatFn (M: AlienMapping): NATN = struct 
+(*Idea for testing: create int_of_aliensym such that everything is shifted +1 int? *)
+module AlienNatFn (M: AlienMapping): NATN = struct
   type t = M.aliensym list
   let zero : t = [M.zero]
   let one : t = [M.one]
-  let addition (acc : t) (el : M.aliensym) = el::acc
-  let ( + ) (t1: t) (t2: t) :t =  List.fold_left addition t1 t2
+
+  let add_helper (acc : t) (el : M.aliensym) = el::acc
+  let ( + ) (t1: t) (t2: t) :t =  List.fold_left add_helper t1 t2
+
   let rec multiply (multiplier_t2: int) (lst : t) : t =
       if (multiplier_t2 <= 0) then lst 
-      else multiply (multiplier_t2 - 1) (List.fold_left addition lst t1
+      else multiply (multiplier_t2 - 1) (List.fold_left addition lst t1)
   let ( * ) (t1: t) (t2: t) :t =  multiply (int_of_nat(t2)) t1
   let ( < ) (t1: t) (t2: t) :bool= (int_of_nat(t1) < int_of_nat(t2))
   let ( === ) (t1: t) (t2: t) :bool = (int_of_nat(t1) = int_of_nat(t2))
