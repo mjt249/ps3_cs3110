@@ -94,27 +94,47 @@ module ListNat : NATN = struct
     else 
       (raise Unrepresentable)
 
-  let rec add_x_to_length (current :int) (lst: t) : t =
+  let rec add_int_to_length (current :int) (lst: t) : t =
     if (current <= 0) then lst
     else 
       add_x_to_length (current - 1) (1 :: lst) 
+
+
+  (*this one is specifically for adding lists together. 
+    lists might be longer than max_int, which would be impossible
+    to add with add_x_to_length*)
+  let rec add_list_to_lenth (current_list :t) (lst: t) : t =
+    match current_list with
+     [] -> lst
+    |hd::tail -> add_list_to_length tail (1::lst)
       
   let nat_of_int (x : int) : t =
     if x < 0 then (raise Unrepresentable) else
-      add_x_to_length x []
+      add_int_to_length x []
       
+  (*uses add_list_to_length now*)    
   let ( + ) (t1: t) (t2: t) : t =
-    add_x_to_length (List.length(t2)) t1
+    add_list_to_length t2 t1
 
   let ( * ) (t1: t) (t2: t) : t =
-    let product = (List.length(t1) * List.length(t2)) in
-      add_x_to_length (product - (List.length(t1))) t1
+    let rec product_helper (t1: t) (t2: t) (product: t) : t =
+      match t1 with
+       [] -> product
+      |hd::tail -> product_helper tail t2 (add_list_to_length t2 product) in
+    product_helper t1 t2 []
+
+  let rec compare_length (t1: t) (t2: t) : int =
+    match t1, t2 with
+      [], [] -> 0
+    | [], hd::tl -> 1 (*second list longer*)
+    | hd::tl, [] -> -1 (*first list longer*)
+    | hd1::tl1, hd2::tl2 -> compare_length tl1 tl2  
 
   let ( < ) (t1: t) (t2: t) : bool =
-    (List.length(t1)) < (List.length(t2))
+    (compare_length t1 t2) = 1
 
   let ( === ) (t1: t) (t2: t) : bool =
-    (List.length(t1)) = (List.length(t2))
+    (compare_length t1 t2) = 0
 
 end
 
@@ -135,7 +155,7 @@ module AlienNatFn (M: AlienMapping): NATN = struct
   let ( + ) (t1: t) (t2: t) :t =  List.fold_left addition t1 t2
   let rec multiply (multiplier_t2: int) (lst : t) : t =
       if (multiplier_t2 <= 0) then lst 
-      else multiply (multiplier_t2 - 1) (List.fold_left addition lst t1
+      else multiply (multiplier_t2 - 1) (List.fold_left addition lst t1)
   let ( * ) (t1: t) (t2: t) :t =  multiply (int_of_nat(t2)) t1
   let ( < ) (t1: t) (t2: t) :bool= (int_of_nat(t1) < int_of_nat(t2))
   let ( === ) (t1: t) (t2: t) :bool = (int_of_nat(t1) = int_of_nat(t2))
