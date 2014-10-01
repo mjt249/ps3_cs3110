@@ -179,14 +179,46 @@ module AlienNatFn (M: AlienMapping): NATN = struct
   let add_helper (acc : t) (el : M.aliensym) = el::acc
   let ( + ) (t1: t) (t2: t) :t =  List.fold_left add_helper t1 t2
 
-  let rec multiply (multiplier_t2: int) (lst : t) : t =
-      if (multiplier_t2 <= 0) then lst 
-      else multiply (multiplier_t2 - 1) (List.fold_left addition lst t1)
-  let ( * ) (t1: t) (t2: t) :t =  multiply (int_of_nat(t2)) t1
+  let ( * ) (t1: t) (t2: t) :t = 
+    (*takes a symbol, and appends the list symbol-times*)
+    let sym_list_product (lst: t) (sym: M.aliensym) : t =
+      let sym_int = M.int_of_aliensym in
+      let rec sym_list_product_helper (counter: int) (acc: t) :t =
+        if counter = 0 then acc
+        else
+          sym_list_product_helper (counter-1) (acc + lst) in
+      sym_list_product_helper (sym_int) [] in
+
+    let rec prod_helper (first: t) (second: t) (acc:t) =
+      match second with
+       [] -> acc
+      |hd::tl -> prod_helper first tl (acc + (sym_list_product first hd)) in
+
+    prod_helper t1 t2 
+
+  let rec compare_alien_sym_list (pos_lst:t) (neg_lst:t) 
+
+    (max_int_counter: int) (pos_counter: int) (neg_counter: int) =
+    (*check max over flow*)
+    match t1, t2 with
+     [], [] -> if (max_int_counter > 0 ) then 1 
+               else if (max_int_counter < 0) then -1
+               else if ((pos_counter - neg_counter) > 0) then 1
+               else if ((pos_counter - neg_counter) < 0) then -1
+               else if ((pos_counter - neg_counter) = 0) then 0
+    | hd1::tl1, [] -> if (max_int_counter > 0) || (max_int_counter = 0 && (pos_counter - neg_counter) >= 0) then
+                        1 (*pos_list is larger*)
+                      else 
+    | [], hd2::tl2 -> if (max_int_counter < 0) || (max_int_counter = 0 && (pos_counter - neg_counter) =< 0) then
+                        -1 (*neg_list is larger*)
+                      else 
+    | hd1::tl1, hd2::tl2 -> if 
+
   let ( < ) (t1: t) (t2: t) :bool= (int_of_nat(t1) < int_of_nat(t2))
   let ( === ) (t1: t) (t2: t) :bool = (int_of_nat(t1) = int_of_nat(t2))
+  (*look for negatives going over*)
   let int_of_nat (t1: t) : int = List.fold_left ( + ) 0 (List.map M.int_of_aliensym t1)
-  let nat_of_int = (*My idea is to make a list of ones...?*)
+  let nat_of_int = 
 
 end 
 
