@@ -49,7 +49,8 @@ let sum_overflows (i1:int) (i2:int) : bool =
 (* Add your solution here for IntNat, ListNat, NatConvertFn, 
    and AlienNatFn, being careful to use the declarations and
    types specified in the problem set. *)
-
+(*Raises Unrepresentatble if NATN argument passed is >= to max_int
+*)
 module IntNat : NATN = struct
   type t = int
      exception Unrepresentable
@@ -65,7 +66,7 @@ module IntNat : NATN = struct
   let one : t = 1
   let ( + ) (t1: t) (t2: t) : t =
     nat_of_int(int_of_nat(t1) + int_of_nat(t2))   
- 
+ (*Need to add recursivly to prevent overflow*)
   let ( * ) (t1: t) (t2: t) : t = 
     nat_of_int(int_of_nat(t1) * int_of_nat(t2))   
 
