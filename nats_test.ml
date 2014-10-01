@@ -1,7 +1,7 @@
 open Nats
 open Assertions
 open Printf
-open IntNat
+open ListNat
 
 
 
@@ -58,6 +58,11 @@ let x = nat_of_int 5 in
 let y = nat_of_int 3 in
 let rslt = ( < ) x y in
 assert_false (rslt)
+let x = nat_of_int(max_int - 3) in
+let y = nat_of_int(15) in
+let rslt = ( + ) x y in
+assert_true (rslt <> y)
+
 
 
 
