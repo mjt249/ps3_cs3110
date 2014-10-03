@@ -49,7 +49,7 @@ let sum_overflows (i1:int) (i2:int) : bool =
 (* Add your solution here for IntNat, ListNat, NatConvertFn, 
    and AlienNatFn, being careful to use the declarations and
    types specified in the problem set. *)
-(*Raises Unrepresentatble if NATN argument passed is >= to max_int
+(*Raises Unrepresentable if NATN argument passed is >= to max_int
 *)
 module IntNat : NATN = struct
   type t = int
@@ -176,58 +176,83 @@ end
 (*Idea for testing: create int_of_aliensym such that everything is shifted +1 int? *)
 module AlienNatFn (M: AlienMapping): NATN = struct
   type t = M.aliensym list
+  exception Unrepresentable
   let zero : t = [M.zero]
   let one : t = [M.one]
 
   let add_helper (acc : t) (el : M.aliensym) = el::acc
+  
   let ( + ) (t1: t) (t2: t) :t =  List.fold_left add_helper t1 t2
 
   let ( * ) (t1: t) (t2: t) :t = 
     (*takes a symbol, and appends the list symbol-times*)
     let sym_list_product (lst: t) (sym: M.aliensym) : t =
-      let sym_int = M.int_of_aliensym in
+      let sym_int = M.int_of_aliensym(sym) in
       let rec sym_list_product_helper (counter: int) (acc: t) :t =
         if counter = 0 then acc
         else
           sym_list_product_helper (counter-1) (acc + lst) in
-      sym_list_product_helper (sym_int) [] in
+      sym_list_product_helper sym_int [] in
 
     let rec prod_helper (first: t) (second: t) (acc:t) =
       match second with
        [] -> acc
       |hd::tl -> prod_helper first tl (acc + (sym_list_product first hd)) in
 
-    prod_helper t1 t2 
-
-  let compare_counters (max_int_counter: int) (difference: int) =
+    prod_helper t1 t2 []
 
 
-  let rec compare_alien_sym_list (t1:t) (t2:t) (overflow: int) (diff: int) =
-  (*can use fold. maybe 3 steps.*)
-    (*check max over flow*)
+  (*takes two int lists, sorts differences of the elements according to sign 
+  until at least one of the lists are empty.*)
+  let rec compare_int_list (lst1: int list) (lst2: int list) (pos_dif: int list) (neg_dif: int list) : int =
+    match lst1, lst2 with
+      [], [] -> 
+      (*done comparing the lists.*)
+      (match pos_dif, neg_dif with
+       [], [] -> 0
+      | lst, [] -> 1 (*more postives, first list larger*)
+      | [], lst -> -1 (*more negatives, second list larger*)
+      | pos, neg -> compare_int_list pos neg [] [])
+    | hd::tl, [] -> compare_int_list tl [] (hd::pos_dif) neg_dif
+    | [], hd::tl -> compare_int_list [] tl pos_dif (hd::neg_dif)
+    | hd1::tl1, hd2::tl2 ->  
+      let dif = hd1 - hd2 in
+      if (dif < 0) then compare_int_list tl1 tl2 pos_dif ((-dif)::neg_dif)
+      else if (dif = 0) then compare_int_list tl1 tl2 pos_dif neg_dif
+      else compare_int_list tl1 tl2 (dif::pos_dif) neg_dif
 
+  (*takes two alien sym lists and finds the differences, making the lists
+  suitable for function compare_int_list*)
+  let rec compare_alien_sym_list (t1:t) (t2:t) (pos_dif: int list) (neg_dif: int list): int =
     match t1, t2 with
-     [], [] -> compare_counters max_int_counter difference
-    | hd::tl, [] -> let hd_int = M.int_of_aliensym(hd) in
-                    if (sum_overflows diff hd_int) then
-                      compare_alien_sym_list tl [] (overflow + 1) (diff + hd_int - max_int)
-                    else
-                      compare_alien_sym_list tl [] overflow (diff + hd_int)
-    | [], hd::tl -> let hd_int = - M.int_of_aliensym(hd) in
-                    if (sum_overflows diff hd_int) then
-                      compare_alien_sym_list [] tl (overflow - 1) (diff + hd_int + max_int)
-                    else
-                      compare_alien_sym_list [] tl overflow (diff + hd_int)
-    | hd1::tl1, hd2::tl2 -> let hd_diff = M.int_of_aliensym(hd1) - M.int_of_aliensym(hd2) in
-                            if (hd_diff < 0)
+      [], [] -> compare_int_list pos_dif neg_dif [] []
+    | hd::tl, [] -> compare_alien_sym_list tl [] ((M.int_of_aliensym(hd))::pos_dif) neg_dif
+    | [], hd::tl -> compare_alien_sym_list [] tl pos_dif ((M.int_of_aliensym(hd))::neg_dif)
+    | hd1::tl1, hd2::tl2 -> 
+      let dif = M.int_of_aliensym(hd1) - M.int_of_aliensym(hd2) in
+      if (dif < 0) then compare_alien_sym_list tl1 tl2 pos_dif ((-dif)::neg_dif)
+      else if (dif = 0) then compare_alien_sym_list tl1 tl2 pos_dif neg_dif
+      else compare_alien_sym_list tl1 tl2 (dif::pos_dif) neg_dif
 
+  let ( < ) (t1: t) (t2: t) :bool=
+    (compare_alien_sym_list t1 t2 [] []) = -1 
 
-  let ( < ) (t1: t) (t2: t) :bool= (int_of_nat(t1) < int_of_nat(t2))
-  let ( === ) (t1: t) (t2: t) :bool = (int_of_nat(t1) = int_of_nat(t2))
-  (*look for negatives going over
-    List.map is not tail recursive :( we need something else. *)
-  let int_of_nat (t1: t) : int = List.fold_left ( + ) 0 (List.map M.int_of_aliensym t1)
-  let nat_of_int = 
+  let ( === ) (t1: t) (t2: t) :bool = 
+    (compare_alien_sym_list t1 t2 [] []) = 0
+
+  let int_of_nat (t1: t) : int = 
+    let rec add_syms (sym_lst: t) (acc: int) : int =
+      match sym_lst with
+       [] -> acc
+      |hd::tl -> if (sum_overflows acc (M.int_of_aliensym(hd))) then (raise Unrepresentable)
+                 else add_syms tl (Pervasives.(+) acc (M.int_of_aliensym(hd))) in
+    add_syms t1 0
+
+  let nat_of_int (x: int) : t =
+    let rec make_sym_list (counter: int) (acc: t) : t =
+      if (counter = 0) then acc
+      else make_sym_list (counter - 1) (M.one::acc) in
+    make_sym_list x []
 
 end 
 
