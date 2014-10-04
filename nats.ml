@@ -217,6 +217,12 @@ module AlienNatFn (M: AlienMapping): NATN = struct
         | hd::tl -> prod_helper first tl (acc + (sym_list_product first hd)) in
               prod_helper t1 t2 []
 
+    (*requires, non empty list*)
+    let rec all_zeros (lst: int list) (acc: bool) =
+        match lst with
+         [] -> acc
+        |hd::tl -> if (hd = 0) then all_zeros tl true
+                   else false
 
   (*takes two int lists, sorts differences of the elements according to sign 
   until at least one of the lists are empty.*)
@@ -226,8 +232,8 @@ module AlienNatFn (M: AlienMapping): NATN = struct
       (*done comparing the lists.*)
             (match pos_dif, neg_dif with
               [], [] -> 0
-             | lst, [] -> 1 (*more postives, first list larger*)
-             | [], lst -> -1 (*more negatives, second list larger*)
+             | lst, [] -> if (all_zeros lst false) then 0 else 1(*more postives, first list larger*)
+             | [], lst -> if (all_zeros lst false) then 0 else -1 (*more negatives, second list larger*)
              | pos, neg -> compare_int_list pos neg [] [])
         | hd::tl, [] -> compare_int_list tl [] (hd::pos_dif) neg_dif
         | [], hd::tl -> compare_int_list [] tl pos_dif (hd::neg_dif)
@@ -240,15 +246,9 @@ module AlienNatFn (M: AlienMapping): NATN = struct
   (*takes two alien sym lists and finds the differences, making the lists
   suitable for function compare_int_list*)
     let rec compare_alien_sym_list (t1:t) (t2:t) (pos_dif: int list) (neg_dif: int list): int =
-        match t1, t2 with
-         [], [] -> compare_int_list pos_dif neg_dif [] []
-        | hd::tl, [] -> compare_alien_sym_list tl [] ((M.int_of_aliensym(hd))::pos_dif) neg_dif
-        | [], hd::tl -> compare_alien_sym_list [] tl pos_dif ((M.int_of_aliensym(hd))::neg_dif)
-        | hd1::tl1, hd2::tl2 -> 
-            let dif = M.int_of_aliensym(hd1) - M.int_of_aliensym(hd2) in
-               if (dif < 0) then compare_alien_sym_list tl1 tl2 pos_dif ((-dif)::neg_dif)
-               else if (dif = 0) then compare_alien_sym_list tl1 tl2 pos_dif neg_dif
-               else compare_alien_sym_list tl1 tl2 (dif::pos_dif) neg_dif
+        let t1_int_list = List.rev_map M.int_of_aliensym t1 in
+        let t2_int_list = List.rev_map M.int_of_aliensym t2 in
+        compare_int_list t1_int_list t2_int_list [] []
 
     let ( < ) (t1: t) (t2: t) :bool=
         (compare_alien_sym_list t1 t2 [] []) = -1 
