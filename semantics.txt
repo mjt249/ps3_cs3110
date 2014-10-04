@@ -1,14 +1,20 @@
+
 1.
+
 (a)
 
 if e0 then e1 else e2
 
-if (e0 : int) and (e1 : 'a) and (e1: 'a)
-e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a.
+if (e0 : int) and (e1 : 'a) and (e2: 'a) then type check passes
+e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a. then type check passes
+
+
+
 
 (b)
 
 'a -> 'a -> int
+
 
 (c)
 
