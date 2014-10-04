@@ -1,8 +1,8 @@
 open Nats
 open Assertions
 open Printf
-open ListNat
-
+(* open AlienNatFn *)
+open AlienConvert
 
 
 TEST_UNIT "IntNat_and_ListNat" =
@@ -21,10 +21,12 @@ let newx = int_of_nat x in
 assert_true (1 = newx)
 let x = zero in
 let newx = nat_of_int 0 in
-assert_true (x = newx)
+let equ = (===) x newx in
+assert_true (equ)
 let x = one in
 let newx = nat_of_int 1 in
-assert_true (x = newx)
+let equ = (===) x newx in
+assert_true (equ)
 let x = -5 in
 assert_raises (Some Unrepresentable) nat_of_int x
 let x = nat_of_int 3 in
@@ -58,10 +60,10 @@ let x = nat_of_int 5 in
 let y = nat_of_int 3 in
 let rslt = ( < ) x y in
 assert_false (rslt)
-let x = nat_of_int(max_int - 3) in
+(* let x = nat_of_int(max_int - 3) in
 let y = nat_of_int(15) in
 let rslt = ( + ) x y in
-assert_true (rslt <> y)
+assert_true (rslt <> y) *)
 
 
 
