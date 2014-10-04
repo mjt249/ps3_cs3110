@@ -183,14 +183,6 @@ module NatConvertFn ( N : NATN ) = struct
 
 end
 
-(*For testing purposes only*)
-(* module M : AlienMapping = struct
-    type aliensym = float
-    let int_of_aliensym (a : aliensym) : int = int_of_float a
-    let one : aliensym = 1.0
-    let zero : aliensym = 0.0
-end *)
-
 
 module AlienNatFn (M: AlienMapping): NATN = struct
     type t = M.aliensym list
@@ -266,7 +258,7 @@ module AlienNatFn (M: AlienMapping): NATN = struct
         add_syms t1 0
    
     let nat_of_int (x: int) : t =
-        if (x > 0) then 
+        if (x >= 0) then 
             let rec make_sym_list (counter: int) (acc: t) : t =
                 if (counter = 0) then acc
             else make_sym_list (counter - 1) (M.one::acc) in
@@ -276,7 +268,15 @@ module AlienNatFn (M: AlienMapping): NATN = struct
 
 end 
 
-(*Testing purposes only*)
-(* module AlienConvert = AlienNatFn(M) *)
+(*For testing purposes only. Specifically for AlienNatFn.*)
+(*module M : AlienMapping = struct
+    type aliensym = float
+    let int_of_aliensym (a : aliensym) : int = int_of_float a
+    let one : aliensym = 1.0
+    let zero : aliensym = 0.0
+end 
+
+
+module AlienConvert = AlienNatFn(M) *)
 
 
