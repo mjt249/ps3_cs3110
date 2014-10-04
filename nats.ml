@@ -33,7 +33,7 @@ module type NATN = sig
    *more than max_int. It is called on nat_of_int if a negative int is passed*)
     exception Unrepresentable
    (*int_of_nat returns an int representation of t.
-   * Must raise Unrepresentable if t > than int_max*)
+   * Must raise Unrepresentable if t > than max_int*)
     val int_of_nat: t -> int
    (*nat_of_int returns a t representation of the natural int passed
    *Must raise Unrepresentable if int < 0*)
