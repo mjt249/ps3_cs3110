@@ -28,7 +28,8 @@ let new_tree (r:region) : 'a quadtree =
 (*insert object s into quadtree q at coor c
 *Precondition: If c is not within the regin of q, will raise OutOfBounds
 *Postcondition: Returns 'a quadtree of a leaf with c and s added to q. 
-*If a leaf has coordinates in the middle of a quadtree, it will be assigned to Quadrant I*)
+*If a leaf has coordinates in the middle of a quadtree, 
+*it will be assigned to Quadrant I*)
 let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
   (*returns the region*)
   let get_region (a_q_tree : 'a quadtree) : region =
@@ -39,7 +40,8 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
   returns coord*obj list*)
   let get_obj_list (a_q_tree : 'a quadtree) : ((coord * 'a) list) =
     match  a_q_tree with
-     Node (_, _, _, _, _) -> raise (PreconditionNotMet "get_obj_list wants a Leaf")
+     Node (_, _, _, _, _) -> 
+         raise (PreconditionNotMet "get_obj_list wants a Leaf")
     |Leaf (_, lst) -> lst in
   (*returns coords are in bounds of region.*)  
   let object_is_in_bounds (an_r: region) (a_c : coord) : bool = 
@@ -63,10 +65,13 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
 
   (*I made insert_to_leaf recursive because we need that base case again. 
     basically the else clause still has what we wanted for "two_objects_dilemma 
-    but insert_to_leaf is the recursive function because we need to check for the
-    diagonal each time."*)
-  (*if leaf has less than mindiag or no obj, insert. otherwise, split it up one level.*)
-  let rec insert_to_leaf (leaf: 'a quadtree) (the_c: coord) (the_obj: 'a) :'a quadtree =
+    but insert_to_leaf is the recursive function because we need to check for 
+    the diagonal each time."*)
+  (*if leaf has less than mindiag or no obj, insert. otherwise, 
+    split it up one level.*)
+  let rec insert_to_leaf (leaf: 'a quadtree) (the_c: coord) 
+          (the_obj: 'a) :'a quadtree 
+  =
     let leaf_region = get_region leaf in
     let x0 = fst(fst leaf_region) in
     let x1 = fst(snd leaf_region) in
@@ -78,7 +83,8 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
        Leaf((get_region leaf), (the_c, the_obj)::(get_obj_list leaf))
     (*leaf has an object and can be split up.*)
     else
-      (*make a node with four leafs out of the original leaf. no objects are in it.*)
+      (*make a node with four leafs out of the original leaf. no objects 
+        are in it.*)
       let new_node = Node (leaf_region, 
       new_tree(((x0 +. x1) /. 2.0, (y0 +. y1) /. 2.0), (x1, y1)), 
       new_tree((x0, (y0 +. y1) /. 2.0), ((x0 +. x1) /. 2.0, y1)), 
@@ -93,9 +99,12 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
       let quad_of_inserting_obj =  quad_of_coords new_node c in
       (*inserts the original object in the right quadtree leaf
         requires a Node with four leaves*)
-      let insert_to_leaf_helper (node: 'a quadtree) (quad_string: string) (obj_c: coord) (obj: 'a) : 'a quadtree =
+      let insert_to_leaf_helper (node: 'a quadtree) (quad_string: string) 
+          (obj_c: coord) (obj: 'a) : 'a quadtree 
+      =
         match node with
-         Leaf (_, _) -> raise (PreconditionNotMet "original_obj_inserted wants a Node") 
+         Leaf (_, _) -> 
+            raise (PreconditionNotMet "original_obj_inserted wants a Node") 
         |Node (reg, one, two, three, four) -> 
           match quad_string with
           |"I" -> Node (reg, (insert_to_leaf one obj_c obj), two, three, four)
@@ -103,7 +112,8 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
           |"III" -> Node (reg, one, two, (insert_to_leaf three obj_c obj), four)
           | _ -> Node (reg, one, two, three, (insert_to_leaf four obj_c obj)) in
       (*the node now has the original object inserted in the right leaf*)
-      let node_w_orig_obj = insert_to_leaf_helper new_node quad_of_original_obj coord_in_leaf obj_in_leaf in
+      let node_w_orig_obj = insert_to_leaf_helper new_node quad_of_original_obj 
+                                coord_in_leaf obj_in_leaf in
       (*match statement to bind the four leaves of the node*)
       insert_to_leaf_helper node_w_orig_obj quad_of_inserting_obj c s in
       
@@ -124,19 +134,29 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
 
   else raise OutOfBounds 
   
-					      
+(*precondition: satisfy types
+  Folds the function argument over the quadtree, 
+  starting with the accumulator argument of type 'a.
+  returns: accumulator a.*)					      
 let rec fold_quad (f: 'a -> (coord * 'b)  -> 'a)
 		  (a: 'a) (t: 'b quadtree): 'a 
 =
   match t with
    Leaf (reg, obj_lst) -> List.fold_left f a obj_lst
   |Node (reg, one, two, three, four) -> 
-    fold_quad f ( fold_quad f ( fold_quad f (fold_quad f a four) three ) two ) one
+    fold_quad f ( fold_quad f ( fold_quad f (fold_quad f a four) three) two) one
 
+(*precondition: r need not be in the region of the quadtree t.
+  Folds the function argument over the quadtree, but only on objects
+  within the region, starting with the accumulator argument of type 'a.
+  returns: accumulator a
+  *)
 let rec fold_region (f: 'a -> coord * 'b -> 'a) (a : 'a) (t : 'b quadtree) 
   (r : region) : 'a
 =
-  let acc_obj_tuple (acc: (coord * 'b) list) (obj_tuple: coord * 'b) : (coord * 'b) list =
+  let acc_obj_tuple (acc: (coord * 'b) list) 
+      (obj_tuple: coord * 'b) : (coord * 'b) list 
+  =
     obj_tuple :: acc in
   let all_obj_lst = fold_quad acc_obj_tuple [] t in
 

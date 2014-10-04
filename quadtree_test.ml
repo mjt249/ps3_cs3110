@@ -19,7 +19,9 @@ let count_obj (acc : int) (tuple : coord * 'b) : int =
 
 (*testing insert requires using fold quad. 
   we are essentially testing fold quad here since my function count_obj
-  passed through fold quad needs to give me the right number of insertions*)
+  passed through fold quad needs to give me the right number of insertions
+  we also call quadtree functions in city search and we have tested those
+  extensively as well.*)
 
 TEST_UNIT "insert_test1" = assert_true ((fold_quad count_obj 0 one_object) = 1)
 TEST_UNIT "insert_test2" = assert_true ((fold_quad count_obj 0 two_objects) = 2)
