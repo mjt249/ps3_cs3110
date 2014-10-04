@@ -1,33 +1,42 @@
 (* BEGIN: DO NOT CHANGE THIS CODE, except for adding comments
    to NATN as required in exercise 1. *)
 module type NATN = sig
+(*t is a representation of a natural number or a number >= 0*)
     type t
+
 (*zero has the identity property that zero + t = t and zero * t = zero*)
     val zero : t
+
 (*one has the identity property that 1 * t = 1 unless t is 0*)
     val one : t
-(*(+) takes two ts and combines their ints 
+
+(*(+) takes two ts and returns a t representation of their sum
 * (+) is associative: (a + b) + c = a + (b + c)
 * (+) is commutative: a + b = b + a
-* Identity is 0 -> 0 + t = t
-*)
+* Identity is 0 --> 0 + t = t *)
     val ( + ) : t -> t -> t
-(*( * )takes two ts and combines multiplies their ints 
+
+(*( * )takes two ts and returns a t representation of their product
 * ( * ) is associative: (a * b) * c = a * (b * c)
 * ( * ) is commutative: a * b = b * a
 * Identity is 1 -> 1 * t = t
 * multiplication is distributive over addition:
-* a * (b + c) = (a * b) + (a * c)
-*)
+* a * (b + c) = (a * b) + (a * c) *)
     val ( * ) : t -> t -> t 
-  (*If a is < b then true, else false*)
-    val ( < ) : t -> t -> bool
-  (*if a is = to b then true, else false*)
-    val ( === ) : t -> t -> bool
-			    
-    exception Unrepresentable
 
+(*( < ) returns true only if the first t passed is less than the second t*)
+    val ( < ) : t -> t -> bool
+(*( === ) returns true only if the first t 
+*and the second t represent the same natural number *)
+    val ( === ) : t -> t -> bool
+(* Unrepresentable if called if the t passed int_of_nat would be 
+*more than max_int. It is called on nat_of_int if a negative int is passed*)
+    exception Unrepresentable
+(*int_of_nat returns an int representation of t.
+* Must raise Unrepresentable if t > than int_max*)
     val int_of_nat: t -> int
+(*nat_of_int returns a t representation of the natural int passed
+*Must raise Unrepresentable if int < 0*)
     val nat_of_int: int -> t
 end
 
@@ -49,6 +58,7 @@ type sign = Positive | Negative
 (* Add your solution here for IntNat, ListNat, NatConvertFn, 
    and AlienNatFn, being careful to use the declarations and
    types specified in the problem set. *)
+
 (*Raises Unrepresentable if NATN argument passed is >= to max_int
 *)
 module IntNat : NATN = struct
@@ -244,42 +254,6 @@ module AlienNatFn (M: AlienMapping): NATN = struct
         else
             let acc : int * int list = (0,[]) in
             compare_list (List.fold_left (fun acc e -> (overflow_checker (fst acc) e (snd acc))) acc lst_of_ints) 
-
-
-    
-      
-
-
-    (* let rec compare_int_list (lst1: int list) (lst2: int list) (pos_dif: int list) (neg_dif: int list) : int =
-        match lst1, lst2 with
-         [], [] -> 
-      (*done comparing the lists.*)
-            (match pos_dif, neg_dif with
-              [], [] -> 0
-             | lst, [] -> if (all_zeros lst false) then 0 else 1(*more postives, first list larger*)
-             | [], lst -> if (all_zeros lst false) then 0 else -1 (*more negatives, second list larger*)
-             | pos, neg -> compare_int_list pos neg [] [])
-        | hd::tl, [] -> compare_int_list tl [] (hd::pos_dif) neg_dif
-        | [], hd::tl -> compare_int_list [] tl pos_dif (hd::neg_dif)
-        | hd1::tl1, hd2::tl2 ->  
-            let dif = hd1 - hd2 in
-                if (dif < 0) then compare_int_list tl1 tl2 pos_dif ((-dif)::neg_dif)
-                else if (dif = 0) then compare_int_list tl1 tl2 pos_dif neg_dif
-                else compare_int_list tl1 tl2 (dif::pos_dif) neg_dif
-
-  (*takes two alien sym lists and finds the differences, making the lists
-  suitable for function compare_int_list*)
-    let rec compare_alien_sym_list (t1:t) (t2:t) (pos_dif: int list) (neg_dif: int list): int =
-
-        match t1, t2 with
-         [], [] -> compare_int_list pos_dif neg_dif [] []
-        | hd::tl, [] -> compare_alien_sym_list tl [] ((M.int_of_aliensym(hd))::pos_dif) neg_dif
-        | [], hd::tl -> compare_alien_sym_list [] tl pos_dif ((M.int_of_aliensym(hd))::neg_dif)
-        | hd1::tl1, hd2::tl2 -> 
-            let dif = M.int_of_aliensym(hd1) - M.int_of_aliensym(hd2) in
-               if (dif < 0) then compare_alien_sym_list tl1 tl2 pos_dif ((-dif)::neg_dif)
-               else if (dif = 0) then compare_alien_sym_list tl1 tl2 pos_dif neg_dif
-               else compare_alien_sym_list tl1 tl2 (dif::pos_dif) neg_dif *)
 
 
     let ( < ) (t1: t) (t2: t) :bool=
