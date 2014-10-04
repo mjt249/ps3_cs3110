@@ -198,7 +198,8 @@ module AlienNatFn (M: AlienMapping): NATN = struct
     let one : t = [M.one]
 
     let add_helper (acc : t) (el : M.aliensym) = el::acc
-  
+    let sub_helper (acc: int list) (el: M.aliensym) = (-M.int_of_aliensym(el))::acc
+    let other_add_helper (acc: int list) (el: M.aliensym) = (M.int_of_aliensym(el))::acc
     let ( + ) (t1: t) (t2: t) :t =  List.fold_left add_helper t1 t2
 
     let ( * ) (t1: t) (t2: t) :t = 
@@ -220,7 +221,30 @@ module AlienNatFn (M: AlienMapping): NATN = struct
 
   (*takes two int lists, sorts differences of the elements according to sign 
   until at least one of the lists are empty.*)
-    let rec compare_int_list (lst1: int list) (lst2: int list) (pos_dif: int list) (neg_dif: int list) : int =
+   (*returns list with positive second concatinated onto negative first*)
+    let create_list_to_check (first: t) (second: t) : int list=
+        let first_part = List.fold_left (fun acc e -> (sub_helper acc e)) [] first in
+        List.fold_left (fun acc e -> (other_add_helper acc e)) first_part second
+
+    let overflow_checker (ac : int) (el : int) (overflow: int list) : int * int list =
+        let sum = Pervasives.(+) ac el in
+        match ((ac >= 0),(el >= 0),(sum >= 0)) with
+         (true, true, false) -> ((sum - max_int), (1::overflow))
+        | (false, false, true) -> ((Pervasives.(+) sum max_int), (-1::overflow))
+        | (_,_,_) -> (sum, overflow)
+
+    let rec compare_list (accm,lst_of_ints) : int =
+        if (lst_of_ints = []) then accm
+        else
+            let acc : int * int list = (0,[]) in
+            compare_list (List.fold_left (fun acc e -> (overflow_checker (fst acc) e (snd acc))) acc lst_of_ints) 
+
+
+    
+      
+
+
+    (* let rec compare_int_list (lst1: int list) (lst2: int list) (pos_dif: int list) (neg_dif: int list) : int =
         match lst1, lst2 with
          [], [] -> 
       (*done comparing the lists.*)
@@ -248,13 +272,17 @@ module AlienNatFn (M: AlienMapping): NATN = struct
             let dif = M.int_of_aliensym(hd1) - M.int_of_aliensym(hd2) in
                if (dif < 0) then compare_alien_sym_list tl1 tl2 pos_dif ((-dif)::neg_dif)
                else if (dif = 0) then compare_alien_sym_list tl1 tl2 pos_dif neg_dif
-               else compare_alien_sym_list tl1 tl2 (dif::pos_dif) neg_dif
+               else compare_alien_sym_list tl1 tl2 (dif::pos_dif) neg_dif *)
 
     let ( < ) (t1: t) (t2: t) :bool=
-        (compare_alien_sym_list t1 t2 [] []) = -1 
+        let lst = create_list_to_check t1 t2 in
+        let rslt :int = compare_list (0,lst) in
+        (rslt > 0)
 
     let ( === ) (t1: t) (t2: t) :bool = 
-        (compare_alien_sym_list t1 t2 [] []) = 0
+        let lst = create_list_to_check t1 t2 in
+        let rslt = compare_list (0,lst) in
+        (rslt = 0)
 
     let int_of_nat (t1: t) : int = 
        let rec add_syms (sym_lst: t) (acc: int) : int =
@@ -266,7 +294,7 @@ module AlienNatFn (M: AlienMapping): NATN = struct
 
     let nat_of_int (x: int) : t =
         let rec make_sym_list (counter: int) (acc: t) : t =
-            if (counter = 0) then acc
+            if (counter <= 0) then acc
             else make_sym_list (counter - 1) (M.one::acc) in
                  make_sym_list x [M.zero]
 end 
