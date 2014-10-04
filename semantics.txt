@@ -1,4 +1,6 @@
-Excercise 1)
+
+1.
+
 (a)
 
 if e0 then e1 else e2
@@ -14,24 +16,32 @@ e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a. then type 
 'a -> 'a -> int
 
 
-c)
+(c)
 
-To evaluate if e0 then e1 else e2
+if env :: e0 --> 0
+and env :: e1 --> v1
+then env :: (if e0 then e1 else e2) --> v1
+else
+and env :: e2 --> v2
+then env :: (if e0 then e1 else e2) --> v2
 
-Evaluate the guard subexpression e0 --> v0
-
-if v0 = 0, then evaluate e2 --> v2 and return v2
-
-else evaluate e1 --> v1 and return v1
-
+(d)
+match e0 with
+ 0 -> e1
+|_-> e2
 
 
 
 
 
 
-Exercise 2) 
 
+
+
+
+
+
+2.
 
 let x = 1 in
 let f = fun y ->
@@ -45,4 +55,42 @@ z
 
 
 First let binds x to 1, creating environment {x=1}.
-Second let binds f to << fun y -> ()>>
+
+(Third let bind x to y+1, shadowing the previous binding and
+creating environment {x = y+1, z = x+y+z})
+
+Say function body of fun y (let x = y+1 in fun z -> x+y+z), is K.
+
+Second let binds f to << fun y -> K, {x=1}>> 
+creating environment {x=1, f= << fun y -> K, {x=1}>>}
+
+Fourth let binds x to 3, shadowing the previous binding and 
+creating environment {x=3, f= << fun y -> K, {x=1}>>}
+
+Fifth let creates environment {x = 1, y = 4} (extended from f's closure's environment.)
+The function body K, (let x = y+1 in fun z -> x+y+z) is evaluated in that environment.
+By the let expression evaluation rule,
+if {x = 1, y = 4} :: y+1 -> 5 
+and {x = 5, y = 4} :: fun z -> 9 + z (x's previous binding is shadowed)
+then {x = 1, y = 4} :: (let x = y+1 in fun z -> x+y+z (which is K)) --> (fun z -> 9 + z)
+
+This binds g to << fun z -> 9 + z, {x = 1, y = 4 }>>
+creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>}
+
+Sixth let binds y to 5, 
+creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>, y = 5}
+
+Seventh let creates environment {x = 1, y = 4, z = 6} (extended from g's closure's environment)
+The function body 9 + z is evaluated in that environment.
+By the anonymous function application rule,
+if {x = 1, y = 4, z = 6} :: 6 -> 6
+and {x = 1, y = 4, z = 6} :: g -->> <<fun z -> 9 + z, {x = 1, y = 4}>>
+and {x = 1, y = 4} + {z = 6} :: 9 + z --> 15
+then {x = 1, y = 4, z = 6} :: g 6 --> 15
+
+This binds z to 15,
+creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>, y = 5, z = 15}
+
+if we call the last environment env,
+Then z is env(z) = 15.
+
