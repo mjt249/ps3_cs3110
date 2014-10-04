@@ -8,7 +8,7 @@ e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a.
 
 (b)
 
-int -> int -> int
+'a -> 'a -> int
 
 
 let x = 1 in
@@ -23,4 +23,42 @@ z
 
 
 First let binds x to 1, creating environment {x=1}.
-Second let binds f to << fun y -> ()>>
+
+(Third let bind x to y+1, shadowing the previous binding and
+creating environment {x = y+1, z = x+y+z})
+
+Say function body of fun y (let x = y+1 in fun z -> x+y+z), is K.
+
+Second let binds f to << fun y -> K, {x=1}>> 
+creating environment {x=1, f= << fun y -> K, {x=1}>>}
+
+Fourth let binds x to 3, shadowing the previous binding and 
+creating environment {x=3, f= << fun y -> K, {x=1}>>}
+
+Fifth let creates environment {x = 1, y = 4} (extended from f's closure's environment.)
+The function body K, (let x = y+1 in fun z -> x+y+z) is evaluated in that environment.
+By the let expression evaluation rule,
+if {x = 1, y = 4} :: y+1 -> 5 
+and {x = 5, y = 4} :: fun z -> 9 + z (x's previous binding is shadowed)
+then {x = 1, y = 4} :: (let x = y+1 in fun z -> x+y+z (which is K)) --> (fun z -> 9 + z)
+
+This binds g to << fun z -> 9 + z, {x = 1, y = 4 }>>
+creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>}
+
+Sixth let binds y to 5, 
+creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>, y = 5}
+
+Seventh let creates environment {x = 1, y = 4, z = 6} (extended from g's closure's environment)
+The function body 9 + z is evaluated in that environment.
+By the anonymous function application rule,
+if {x = 1, y = 4, z = 6} :: 6 -> 6
+and {x = 1, y = 4, z = 6} :: g -->> <<fun z -> 9 + z, {x = 1, y = 4}>>
+and {x = 1, y = 4} + {z = 6} :: 9 + z --> 15
+then {x = 1, y = 4, z = 6} :: g 6 --> 15
+
+This binds z to 15,
+creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>, y = 5, z = 15}
+
+if we call the last environment env,
+Then z is env(z) = 15.
+
