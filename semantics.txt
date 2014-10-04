@@ -1,4 +1,4 @@
-1 
+1.
 (a)
 
 if e0 then e1 else e2
@@ -10,6 +10,32 @@ e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a.
 
 'a -> 'a -> int
 
+(c)
+
+if env :: e0 --> 0
+and env :: e1 --> v1
+then env :: (if e0 then e1 else e2) --> v1
+else
+and env :: e2 --> v2
+then env :: (if e0 then e1 else e2) --> v2
+
+(d)
+match e0 with
+ 0 -> e1
+|_-> e2
+
+
+
+
+
+
+
+
+
+
+
+
+2.
 
 let x = 1 in
 let f = fun y ->
