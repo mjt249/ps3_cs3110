@@ -38,21 +38,7 @@ match e0 with
 
 2.
 
-let x = 1 in
-let f = fun y ->
-(let x = y+1 in
-fun z -> x+y+z) in
-let x = 3 in 
-let g = f 4 in 
-let y = 5 in 
-let z = g 6 in 
-z
-
-
 First let binds x to 1, creating environment {x=1}.
-
-(Third let bind x to y+1, shadowing the previous binding and
-creating environment {x = y+1, z = x+y+z})
 
 Say function body of fun y (let x = y+1 in fun z -> x+y+z), is K.
 
@@ -66,7 +52,7 @@ Fifth let creates environment {x = 1, y = 4} (extended from f's closure's enviro
 The function body K, (let x = y+1 in fun z -> x+y+z) is evaluated in that environment.
 By the let expression evaluation rule,
 if {x = 1, y = 4} :: y+1 -> 5 
-and {x = 5, y = 4} :: fun z -> 9 + z (x's previous binding is shadowed)
+and {x = 1, y = 4} + {x = 5} :: fun z -> x+y+z --> fun z -> 9 + z (x's previous binding is shadowed)
 then {x = 1, y = 4} :: (let x = y+1 in fun z -> x+y+z (which is K)) --> (fun z -> 9 + z)
 
 This binds g to << fun z -> 9 + z, {x = 1, y = 4 }>>
@@ -98,6 +84,7 @@ Then z is env(z) = 15.
 Problem 4:
 Both partners did planning and design and pseudocode for all problems. 
 Jay wrote code for 2.1.3 2.1.4 and 2.1.5. Madeleine wrote code for the rest of 2.
-Both coded together on problem 3. Both traded off coding tests and adding code
-to eachother's tests. Jay did most of Problem 1.2 
+Both coded together on problem 3.
+Both traded off coding tests and adding code to each other's tests. 
+Jay did most of Problem 1.
 Madeleine did most of comments and style adjustment.
