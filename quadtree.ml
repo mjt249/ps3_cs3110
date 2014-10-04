@@ -1,27 +1,34 @@
-type coord = float * float
-type region = coord * coord
-(* A Node is represented by a region and four quadtrees that divide the
- region. 
- A Leaf is represented by a region and a list of coord * 'a tuple which
- represent the object in the Leaf's region.
 
- A region consists of two coords which represent the lower left and upper
- right corners of the square it represents. Coords is a float tuple of 
- and x and y.*)
+(*A coord represents a coordinant point (x,y) in an 'a quadtree*)
+type coord = float * float
+(* A region consists of a tuple of two coords which represent the lower
+*left and upper right corners of the square it represents in an 'a quadtree.*)
+type region = coord * coord
+(* An 'a quadtree is a tree composed of Nodes and or Leaves. 
+*A Node is represented by a region and four quadtrees that divide the region. 
+*A Leaf is represented by a region and a list of coord * 'a tuple which
+*represent the exact location and object in the Leaf's region.*)
 type 'a quadtree =
   Node of region * 'a quadtree * 'a quadtree * 'a quadtree * 'a quadtree
   | Leaf of region * ((coord * 'a) list)
-		       
+(*min_diagonal is the limit to how small a region can be. It is in essence
+* the maximum depth of an 'a quadtree*)		       
 let min_diagonal = 0.0000001
 		     
 exception OutOfBounds
 exception PreconditionNotMet of string
 
-(*returns: a quad tree that is a leaf with given region r and no objects.*)
+(*Precondition: r is a region
+*Postcondition: returns 'a quad tree that is a leaf with given region r 
+*and no objects. If r is < than min_diagonal, then there will be no branching
+*when more leaves are added*)
 let new_tree (r:region) : 'a quadtree = 
   Leaf (r, [])
 
-(*insert object s into quadtree q at coor c*)
+(*insert object s into quadtree q at coor c
+*Precondition: If c is not within the regin of q, will raise OutOfBounds
+*Postcondition: Returns 'a quadtree of a leaf with c and s added to q. 
+*If a leaf has coordinates in the middle of a quadtree, it will be assigned to Quadrant I*)
 let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
   (*returns the region*)
   let get_region (a_q_tree : 'a quadtree) : region =

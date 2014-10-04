@@ -13,6 +13,7 @@ let test_region_North_West : region = ((-90.0,0.0),(0.0, 180.0))
 let test_region_North_East : region = ((0.0,0.0),(90.0, 180.0))
 let test_region_South_West : region = ((-90.0,-180.0),(0.0, 0.0))
 let test_region_Middle : region = ((-45.0,-45.0),(45.0,45.0))
+let test_region_Outside : region = ((-900.0,-1800.0),(900.0,1800.0))
 
 TEST_UNIT "insert_test1" = assert_true ((fold_quad count_obj 0 ithaca_tree) = 7)
 
@@ -23,3 +24,4 @@ TEST_UNIT "City_search_3" = assert_true (List.length(city_search city_tree test_
 TEST_UNIT "City_search_4" = assert_true (List.length(city_search city_tree test_region_North_East) = 2)
 TEST_UNIT "City_search_5" = assert_true (List.length(city_search city_tree test_region_South_West) = 2)
 TEST_UNIT "City_search_5" = assert_true (List.length(city_search city_tree test_region_Middle) = 1)
+TEST_UNIT "City_search_1" = assert_true (List.length(city_search city_tree test_region_Outside) = 3)
