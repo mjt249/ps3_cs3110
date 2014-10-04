@@ -1,8 +1,11 @@
 open Nats
 open Assertions
 open Printf
-open AlienConvert
-
+open IntNat
+(*open AlienConvert
+open ListNat*)
+(*we used the same test file and opened whatever we needed to test.
+  there were some tests that were specifically for a module.*)
 
 TEST_UNIT "IntNat_and_ListNat_and_AlienConvert" =
 let x = 3 in
@@ -54,15 +57,15 @@ let x = nat_of_int 5 in
 let y = nat_of_int 3 in
 let rslt = ( < ) x y in
 assert_false (rslt)
-(* let x = nat_of_int(max_int - 3) in
+let x = -5 in
+assert_raises (Some Unrepresentable) nat_of_int x
+(*only for IntNat*)
+(*let x = nat_of_int(max_int - 3) in
 let y = nat_of_int(15) in
-let rslt = ( + ) x y in
-assert_true (rslt <> y) 
+assert_raises (Some Unrepresentable) (( + ) x) y
 let x = nat_of_int 461168601 in
 let y = nat_of_int 461168602 in
-assert_raises (Some Unrepresentable) (( * ) x y)
-let x = -5 in
-assert_raises (Some Unrepresentable) nat_of_int x *)
+assert_raises (Some Unrepresentable) (( * ) x) y *)
 
 
 let () = Pa_ounit_lib.Runtime.summarize() 

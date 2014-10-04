@@ -33,7 +33,7 @@ module type NATN = sig
    *more than max_int. It is called on nat_of_int if a negative int is passed*)
     exception Unrepresentable
    (*int_of_nat returns an int representation of t.
-   * Must raise Unrepresentable if t > than int_max*)
+   * Must raise Unrepresentable if t > than max_int*)
     val int_of_nat: t -> int
    (*nat_of_int returns a t representation of the natural int passed
    *Must raise Unrepresentable if int < 0*)
@@ -64,6 +64,8 @@ type sign = Positive | Negative
 module IntNat : NATN = struct
     type t = int
          exception Unrepresentable
+    (*will never raise Unrepresentable because x is implemented with
+      t = int. x must a natural number be less than max_int*)
     let int_of_nat (x : t) : int= 
         x
 
@@ -181,14 +183,6 @@ module NatConvertFn ( N : NATN ) = struct
 
 end
 
-(*For testing purposes only*)
-(* module M : AlienMapping = struct
-    type aliensym = float
-    let int_of_aliensym (a : aliensym) : int = int_of_float a
-    let one : aliensym = 1.0
-    let zero : aliensym = 0.0
-end *)
-
 
 module AlienNatFn (M: AlienMapping): NATN = struct
     type t = M.aliensym list
@@ -264,7 +258,7 @@ module AlienNatFn (M: AlienMapping): NATN = struct
         add_syms t1 0
    
     let nat_of_int (x: int) : t =
-        if (x > 0) then 
+        if (x >= 0) then 
             let rec make_sym_list (counter: int) (acc: t) : t =
                 if (counter = 0) then acc
             else make_sym_list (counter - 1) (M.one::acc) in
@@ -274,7 +268,15 @@ module AlienNatFn (M: AlienMapping): NATN = struct
 
 end 
 
-(*Testing purposes only*)
-(* module AlienConvert = AlienNatFn(M) *)
+(*For testing purposes only. Specifically for AlienNatFn.*)
+(*module M : AlienMapping = struct
+    type aliensym = float
+    let int_of_aliensym (a : aliensym) : int = int_of_float a
+    let one : aliensym = 1.0
+    let zero : aliensym = 0.0
+end 
+
+
+module AlienConvert = AlienNatFn(M) *)
 
 
