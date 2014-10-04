@@ -265,10 +265,12 @@ module AlienNatFn (M: AlienMapping): NATN = struct
                      add_syms t1 0
 
     let nat_of_int (x: int) : t =
-        let rec make_sym_list (counter: int) (acc: t) : t =
-            if (counter = 0) then acc
-            else make_sym_list (counter - 1) (M.one::acc) in
-                 make_sym_list x [M.zero]
+        if (x >= 0) then
+            let rec make_sym_list (counter: int) (acc: t) : t =
+                if (counter = 0) then acc
+                else make_sym_list (counter - 1) (M.one::acc) in
+            make_sym_list x []
+        else (raise Unrepresentable)
 end 
 
 
