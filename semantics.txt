@@ -94,3 +94,15 @@ creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1
 if we call the last environment env,
 Then z is env(z) = 15.
 
+
+
+
+
+
+
+Problem 4:
+Both partners did planning and design and pseudocode for all problems. 
+Jay wrote code for 2.1.3 2.1.4 and 2.1.5. Madeleine wrote code for the rest of 2.
+Both coded together on problem 3. Both traded off coding tests and adding code
+to eachother's tests. Jay did most of Problem 1.2 
+Madeleine did most of comments and style adjustment.
