@@ -221,12 +221,6 @@ module AlienNatFn (M: AlienMapping): NATN = struct
               prod_helper first tl (acc + (sym_list_product first hd)) in
                 prod_helper t1 t2 []
 
-    (*requires, non empty list*)
-    let rec all_zeros (lst: int list) (acc: bool) =
-        match lst with
-         [] -> acc
-        |hd::tl -> if (hd = 0) then all_zeros tl true
-                   else false
     (*The next three methods work to fold a list of two appended lists to
     *determine which is more or if they are even*)
     let create_list_to_check (first: t) (second: t) : int list=
@@ -239,7 +233,7 @@ module AlienNatFn (M: AlienMapping): NATN = struct
         let sum = Pervasives.(+) ac el in
         match ((ac >= 0),(el >= 0),(sum >= 0)) with
          (true, true, false) -> ((sum - max_int), (1::overflow))
-        | (false, false, true) -> ((Pervasives.(+) sum max_int), -1::overflow))
+        | (false, false, true) -> ((Pervasives.(+) sum max_int), -1::overflow)
         | (_,_,_) -> (sum, overflow)
 
     let rec compare_list (accm,lst_of_ints) : int =
@@ -260,19 +254,23 @@ module AlienNatFn (M: AlienMapping): NATN = struct
         (rslt = 0)
 
     let int_of_nat (t1: t) : int = 
-       let rec add_syms (sym_lst: t) (acc: int) : int =
-           match sym_lst with
-            [] -> acc
-           | hd::tl -> if sum_overflows acc (M.int_of_aliensym(hd))) 
-             then (raise Unrepresentable)
-             else add_syms tl (Pervasives.(+) acc (M.int_of_aliensym(hd))) in
-              add_syms t1 0
-
+        let rec add_syms (sym_lst: t) (acc: int) : int =
+            match sym_lst with
+             [] -> acc
+            | hd::tl -> 
+                if (sum_overflows acc (M.int_of_aliensym(hd))) then 
+                    (raise Unrepresentable)
+                else add_syms tl (Pervasives.(+) acc (M.int_of_aliensym(hd))) in
+        add_syms t1 0
+   
     let nat_of_int (x: int) : t =
-        let rec make_sym_list (counter: int) (acc: t) : t =
-            if (counter <= 0) then acc
+        if (x > 0) then 
+            let rec make_sym_list (counter: int) (acc: t) : t =
+                if (counter = 0) then acc
             else make_sym_list (counter - 1) (M.one::acc) in
-                 make_sym_list x [M.zero]
+            make_sym_list x []
+        else 
+            (raise Unrepresentable)
 
 end 
 
