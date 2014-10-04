@@ -64,6 +64,8 @@ type sign = Positive | Negative
 module IntNat : NATN = struct
     type t = int
          exception Unrepresentable
+    (*will never raise Unrepresentable because x is implemented with
+      t = int. x must a natural number be less than max_int*)
     let int_of_nat (x : t) : int= 
         x
 
