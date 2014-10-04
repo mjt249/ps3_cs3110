@@ -1,14 +1,36 @@
-1 
+Excercise 1)
 (a)
 
 if e0 then e1 else e2
 
-if (e0 : int) and (e1 : 'a) and (e1: 'a)
-e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a.
+if (e0 : int) and (e1 : 'a) and (e2: 'a) then type check passes
+e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a. then type check passes
+
+
+
 
 (b)
 
-int -> int -> int
+'a -> 'a -> int
+
+
+c)
+
+To evaluate if e0 then e1 else e2
+
+Evaluate the guard subexpression e0 --> v0
+
+if v0 = 0, then evaluate e2 --> v2 and return v2
+
+else evaluate e1 --> v1 and return v1
+
+
+
+
+
+
+
+Exercise 2) 
 
 
 let x = 1 in
