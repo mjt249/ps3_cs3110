@@ -4,7 +4,7 @@ open Printf
 open AlienConvert
 
 
-TEST_UNIT "IntNat_and_ListNat" =
+TEST_UNIT "IntNat_and_ListNat_and_AlienConvert" =
 let x = 3 in
 let y = 5 in
 let a = nat_of_int x in
@@ -12,10 +12,8 @@ let b = nat_of_int y in
 let newx = int_of_nat a in
 let newy = int_of_nat b in
 assert_true ((x = newx) && (y = newy))
-
 let x = zero in
 let newx = int_of_nat x in
-
 assert_true (0 = newx)
 let x = one in
 let newx = int_of_nat x in
@@ -28,7 +26,6 @@ let x = one in
 let newx = nat_of_int 1 in
 let equ = (===) x newx in
 assert_true (equ)
-
 let x = nat_of_int 3 in
 let y = nat_of_int 5 in
 let rslt = ( + ) x y in
@@ -37,7 +34,6 @@ let x = nat_of_int 3 in
 let y = nat_of_int 5 in
 let rslt = ( * ) x y in
 assert_true ((int_of_nat rslt)  = 15)
-
 let x = nat_of_int 3 in
 let y = nat_of_int 5 in
 let rslt = ( === ) x y in
@@ -67,12 +63,6 @@ let y = nat_of_int 461168602 in
 assert_raises (Some Unrepresentable) (( * ) x y)
 let x = -5 in
 assert_raises (Some Unrepresentable) nat_of_int x *)
-
-
- 
-
-
-
 
 
 let () = Pa_ounit_lib.Runtime.summarize() 
