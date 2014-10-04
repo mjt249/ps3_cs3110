@@ -177,8 +177,9 @@ module ListNat : NATN = struct
 end
 
 module NatConvertFn ( N : NATN ) = struct
-
+    (*converts natural numbers of type N.t to an int*)
     let int_of_nat (n : N.t ): int = N.int_of_nat(n)
+    (*converts ints to natural numbers of type N.t*)
     let nat_of_int (n : int ): N.t = N.nat_of_int(n)
 
 end
