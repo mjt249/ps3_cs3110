@@ -1,33 +1,42 @@
 (* BEGIN: DO NOT CHANGE THIS CODE, except for adding comments
    to NATN as required in exercise 1. *)
 module type NATN = sig
+    (*t is a representation of a natural number or a number >= 0*)
     type t
-(*zero has the identity property that zero + t = t and zero * t = zero*)
-    val zero : t
-(*one has the identity property that 1 * t = 1 unless t is 0*)
-    val one : t
-(*(+) takes two ts and combines their ints 
-* (+) is associative: (a + b) + c = a + (b + c)
-* (+) is commutative: a + b = b + a
-* Identity is 0 -> 0 + t = t
-*)
-    val ( + ) : t -> t -> t
-(*( * )takes two ts and combines multiplies their ints 
-* ( * ) is associative: (a * b) * c = a * (b * c)
-* ( * ) is commutative: a * b = b * a
-* Identity is 1 -> 1 * t = t
-* multiplication is distributive over addition:
-* a * (b + c) = (a * b) + (a * c)
-*)
-    val ( * ) : t -> t -> t 
-  (*If a is < b then true, else false*)
-    val ( < ) : t -> t -> bool
-  (*if a is = to b then true, else false*)
-    val ( === ) : t -> t -> bool
-			    
-    exception Unrepresentable
 
+    (*zero has the identity property that zero + t = t and zero * t = zero*)
+    val zero : t
+
+    (*one has the identity property that 1 * t = 1 unless t is 0*)
+    val one : t
+
+   (*(+) takes two ts and returns a t representation of their sum
+   * (+) is associative: (a + b) + c = a + (b + c)
+   * (+) is commutative: a + b = b + a
+   * Identity is 0 --> 0 + t = t *)
+    val ( + ) : t -> t -> t
+
+   (*( * )takes two ts and returns a t representation of their product
+   * ( * ) is associative: (a * b) * c = a * (b * c)
+   * ( * ) is commutative: a * b = b * a
+   * Identity is 1 -> 1 * t = t
+   * multiplication is distributive over addition:
+   * a * (b + c) = (a * b) + (a * c) *)
+    val ( * ) : t -> t -> t 
+
+   (*( < ) returns true only if the first t passed is less than the second t*)
+    val ( < ) : t -> t -> bool
+   (*( === ) returns true only if the first t 
+   *and the second t represent the same natural number *)
+    val ( === ) : t -> t -> bool
+   (* Unrepresentable if called if the t passed int_of_nat would be 
+   *more than max_int. It is called on nat_of_int if a negative int is passed*)
+    exception Unrepresentable
+   (*int_of_nat returns an int representation of t.
+   * Must raise Unrepresentable if t > than int_max*)
     val int_of_nat: t -> int
+   (*nat_of_int returns a t representation of the natural int passed
+   *Must raise Unrepresentable if int < 0*)
     val nat_of_int: int -> t
 end
 
@@ -49,6 +58,7 @@ type sign = Positive | Negative
 (* Add your solution here for IntNat, ListNat, NatConvertFn, 
    and AlienNatFn, being careful to use the declarations and
    types specified in the problem set. *)
+
 (*Raises Unrepresentable if NATN argument passed is >= to max_int
 *)
 module IntNat : NATN = struct
@@ -61,12 +71,11 @@ module IntNat : NATN = struct
         if x < 0 then (raise Unrepresentable)
         else x
 
-     let zero : t = 0
-     let one : t = 1
+    let zero : t = 0
+    let one : t = 1
   
-
   (*neither of the two arguments have experienced overflow themselves.*)
-  (*raise unrepresentable if result is larger than max_int*)
+  (*raise Unrepresentable if result is larger than max_int*)
     let ( + ) (t1: t) (t2: t) : t =
 
         let int_t1 = int_of_nat t1 in
@@ -75,10 +84,8 @@ module IntNat : NATN = struct
             else
                 nat_of_int(int_t1 + int_t2)
 
-
- 
   (*neither of the two arguments have experienced overflow thenselves.*)
-  (*raise unrepresentable if result is larger than max_int*)
+  (*raise Unrepresentable if result is larger than max_int*)
 
     let ( * ) (t1: t) (t2: t) : t = 
         if (t1 = zero || t2 = zero) then zero
@@ -86,7 +93,8 @@ module IntNat : NATN = struct
             let rec multiply_helper (fst: t) (snd: t) (prod: t) : t = 
                 if (fst = zero) then prod
                 else
-                    multiply_helper (nat_of_int((int_of_nat fst) -1)) snd (snd + prod) in
+                    multiply_helper 
+                      (nat_of_int((int_of_nat fst) -1)) snd (snd + prod) in
                         multiply_helper t1 t2 zero
 
 
@@ -109,35 +117,36 @@ module ListNat : NATN = struct
     exception Unrepresentable
     let one : t = [1]
     let zero : t = []
-  (*could be longer that max_int which would be unrepresentable.*)
+  (*If x is longer that max_int, will raise unrepresentable.*)
     let int_of_nat (x : t) : int =
         let rec int_of_nat_helper (lst: t) (counter: int) : int =
             if (counter < 0) then (raise Unrepresentable)
             else  
                 match lst with
                  [] -> counter
-                |hd::tail -> int_of_nat_helper tail (Pervasives.(+) counter 1) in
+                |hd::tail -> 
+                   int_of_nat_helper tail (Pervasives.(+) counter 1) in
                       int_of_nat_helper x 0
-
+    (*cons on another int to lst. Does this current times*)
     let rec add_int_to_length (current :int) (lst: t) : t =
         if (current <= 0) then lst
         else 
             add_int_to_length (Pervasives.(-) current 1) (1 :: lst) 
 
 
-  (*this one is specifically for adding lists together. 
+    (*this one is specifically for adding lists together. 
     lists might be longer than max_int, which would be impossible
     to add with add_x_to_length*)
     let rec add_list_to_length (current_list :t) (lst: t) : t =
         match current_list with
          [] -> lst
         |hd::tail -> add_list_to_length tail (1::lst)
-      
+    
     let nat_of_int (x : int) : t =
         if x < 0 then (raise Unrepresentable) else
             add_int_to_length x []
       
-  (*uses add_list_to_length now*)    
+    (*uses add_list_to_length now*)    
     let ( + ) (t1: t) (t2: t) : t =
         add_list_to_length t2 t1
 
@@ -145,12 +154,15 @@ module ListNat : NATN = struct
         let rec product_helper (first: t) (second: t) (product: t) : t =
             match first with
              [] -> product
-            |hd::tail -> product_helper tail second (add_list_to_length t2 product) in
+            |hd::tail -> 
+              product_helper tail second (add_list_to_length t2 product) in
                 product_helper t1 t2 []
 
+    (*If returned is 0, then equal, if 1, then second is longer, else 
+    *first is longer*)
     let rec compare_length (t1: t) (t2: t) : int =
         match t1, t2 with
-         [], [] -> 0
+         [], [] -> 0 (*lists even*)
         | [], hd::tl -> 1 (*second list longer*)
         | hd::tl, [] -> -1 (*first list longer*)
         | hd1::tl1, hd2::tl2 -> compare_length tl1 tl2  
@@ -160,10 +172,7 @@ module ListNat : NATN = struct
 
     let ( === ) (t1: t) (t2: t) : bool =
         (compare_length t1 t2) = 0
-
 end
-
-
 
 module NatConvertFn ( N : NATN ) = struct
 
@@ -172,25 +181,15 @@ module NatConvertFn ( N : NATN ) = struct
 
 end
 
-
-
-
-
-module M : AlienMapping = struct
+(*For testing purposes only*)
+(* module M : AlienMapping = struct
     type aliensym = float
     let int_of_aliensym (a : aliensym) : int = int_of_float a
     let one : aliensym = 1.0
     let zero : aliensym = 0.0
-end
+end *)
 
 
-
-
-
-
-
-(*We need to deal with what happens when M.int_of_aliensym returns something more than max_int*)
-(*Idea for testing: create int_of_aliensym such that everything is shifted +1 int? *)
 module AlienNatFn (M: AlienMapping): NATN = struct
     type t = M.aliensym list
     exception Unrepresentable
@@ -198,8 +197,11 @@ module AlienNatFn (M: AlienMapping): NATN = struct
     let one : t = [M.one]
 
     let add_helper (acc : t) (el : M.aliensym) = el::acc
-    let sub_helper (acc: int list) (el: M.aliensym) = (-M.int_of_aliensym(el))::acc
-    let other_add_helper (acc: int list) (el: M.aliensym) = (M.int_of_aliensym(el))::acc
+    let sub_helper (acc: int list) (el: M.aliensym) = 
+        (-M.int_of_aliensym(el))::acc
+    let other_add_helper (acc: int list) (el: M.aliensym) = 
+        (M.int_of_aliensym(el))::acc
+
     let ( + ) (t1: t) (t2: t) :t =  List.fold_left add_helper t1 t2
 
     let ( * ) (t1: t) (t2: t) :t = 
@@ -215,8 +217,9 @@ module AlienNatFn (M: AlienMapping): NATN = struct
     let rec prod_helper (first: t) (second: t) (acc:t) =
         match second with
          [] -> acc
-        | hd::tl -> prod_helper first tl (acc + (sym_list_product first hd)) in
-              prod_helper t1 t2 []
+        | hd::tl -> 
+              prod_helper first tl (acc + (sym_list_product first hd)) in
+                prod_helper t1 t2 []
 
     (*requires, non empty list*)
     let rec all_zeros (lst: int list) (acc: bool) =
@@ -224,63 +227,27 @@ module AlienNatFn (M: AlienMapping): NATN = struct
          [] -> acc
         |hd::tl -> if (hd = 0) then all_zeros tl true
                    else false
-
-  (*takes two int lists, sorts differences of the elements according to sign 
-  until at least one of the lists are empty.*)
-   (*returns list with positive second concatinated onto negative first*)
+    (*The next three methods work to fold a list of two appended lists to
+    *determine which is more or if they are even*)
     let create_list_to_check (first: t) (second: t) : int list=
-        let first_part = List.fold_left (fun acc e -> (sub_helper acc e)) [] first in
-        List.fold_left (fun acc e -> (other_add_helper acc e)) first_part second
+        let first_part = List.fold_left (fun acc e -> 
+           (sub_helper acc e)) [] first in
+        List.fold_left (fun acc e -> 
+           (other_add_helper acc e)) first_part second
 
-    let overflow_checker (ac : int) (el : int) (overflow: int list) : int * int list =
+    let overflow_checker (ac: int) (el: int) (overflow:int list):int*int list =
         let sum = Pervasives.(+) ac el in
         match ((ac >= 0),(el >= 0),(sum >= 0)) with
          (true, true, false) -> ((sum - max_int), (1::overflow))
-        | (false, false, true) -> ((Pervasives.(+) sum max_int), (-1::overflow))
+        | (false, false, true) -> ((Pervasives.(+) sum max_int), -1::overflow))
         | (_,_,_) -> (sum, overflow)
 
     let rec compare_list (accm,lst_of_ints) : int =
         if (lst_of_ints = []) then accm
         else
             let acc : int * int list = (0,[]) in
-            compare_list (List.fold_left (fun acc e -> (overflow_checker (fst acc) e (snd acc))) acc lst_of_ints) 
-
-
-    
-      
-
-
-    (* let rec compare_int_list (lst1: int list) (lst2: int list) (pos_dif: int list) (neg_dif: int list) : int =
-        match lst1, lst2 with
-         [], [] -> 
-      (*done comparing the lists.*)
-            (match pos_dif, neg_dif with
-              [], [] -> 0
-             | lst, [] -> if (all_zeros lst false) then 0 else 1(*more postives, first list larger*)
-             | [], lst -> if (all_zeros lst false) then 0 else -1 (*more negatives, second list larger*)
-             | pos, neg -> compare_int_list pos neg [] [])
-        | hd::tl, [] -> compare_int_list tl [] (hd::pos_dif) neg_dif
-        | [], hd::tl -> compare_int_list [] tl pos_dif (hd::neg_dif)
-        | hd1::tl1, hd2::tl2 ->  
-            let dif = hd1 - hd2 in
-                if (dif < 0) then compare_int_list tl1 tl2 pos_dif ((-dif)::neg_dif)
-                else if (dif = 0) then compare_int_list tl1 tl2 pos_dif neg_dif
-                else compare_int_list tl1 tl2 (dif::pos_dif) neg_dif
-
-  (*takes two alien sym lists and finds the differences, making the lists
-  suitable for function compare_int_list*)
-    let rec compare_alien_sym_list (t1:t) (t2:t) (pos_dif: int list) (neg_dif: int list): int =
-
-        match t1, t2 with
-         [], [] -> compare_int_list pos_dif neg_dif [] []
-        | hd::tl, [] -> compare_alien_sym_list tl [] ((M.int_of_aliensym(hd))::pos_dif) neg_dif
-        | [], hd::tl -> compare_alien_sym_list [] tl pos_dif ((M.int_of_aliensym(hd))::neg_dif)
-        | hd1::tl1, hd2::tl2 -> 
-            let dif = M.int_of_aliensym(hd1) - M.int_of_aliensym(hd2) in
-               if (dif < 0) then compare_alien_sym_list tl1 tl2 pos_dif ((-dif)::neg_dif)
-               else if (dif = 0) then compare_alien_sym_list tl1 tl2 pos_dif neg_dif
-               else compare_alien_sym_list tl1 tl2 (dif::pos_dif) neg_dif *)
-
+            compare_list (List.fold_left (fun acc e ->
+               (overflow_checker (fst acc) e (snd acc))) acc lst_of_ints) 
 
     let ( < ) (t1: t) (t2: t) :bool=
         let lst = create_list_to_check t1 t2 in
@@ -296,12 +263,12 @@ module AlienNatFn (M: AlienMapping): NATN = struct
        let rec add_syms (sym_lst: t) (acc: int) : int =
            match sym_lst with
             [] -> acc
-           | hd::tl -> if (sum_overflows acc (M.int_of_aliensym(hd))) then (raise Unrepresentable)
-                 else add_syms tl (Pervasives.(+) acc (M.int_of_aliensym(hd))) in
-                     add_syms t1 0
+           | hd::tl -> if sum_overflows acc (M.int_of_aliensym(hd))) 
+             then (raise Unrepresentable)
+             else add_syms tl (Pervasives.(+) acc (M.int_of_aliensym(hd))) in
+              add_syms t1 0
 
     let nat_of_int (x: int) : t =
-
         let rec make_sym_list (counter: int) (acc: t) : t =
             if (counter <= 0) then acc
             else make_sym_list (counter - 1) (M.one::acc) in
@@ -309,7 +276,7 @@ module AlienNatFn (M: AlienMapping): NATN = struct
 
 end 
 
-
-module AlienConvert = AlienNatFn(M)
+(*Testing purposes only*)
+(* module AlienConvert = AlienNatFn(M) *)
 
 
