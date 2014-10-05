@@ -19,16 +19,15 @@ e0 evaluates to type int, and e1 and e2 evaluate to the same type 'a. then type 
 (c)
 
 if env :: e0 --> 0
-and env :: e1 --> v1
-then env :: (if e0 then e1 else e2) --> v1
-else
 and env :: e2 --> v2
 then env :: (if e0 then e1 else e2) --> v2
+else if env :: e1 --> v1
+then env :: (if e0 then e1 else e2) --> v1
 
 (d)
 match e0 with
- 0 -> e1
-|_-> e2
+ 0 -> e2
+|_-> e1
 
 
 
@@ -37,6 +36,8 @@ match e0 with
 
 
 2.
+
+(Note that I've applied the evaluation rule for variables implicitly when evaluating other rules except for the very last z, where I show the whole rule. Basically, if x is bound to some value inside the environment, I use that value for x.)
 
 First let binds x to 1, creating environment {x=1}.
 
@@ -63,7 +64,7 @@ creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1
 
 Seventh let creates environment {x = 1, y = 4, z = 6} (extended from g's closure's environment)
 The function body 9 + z is evaluated in that environment.
-By the anonymous function application rule,
+By the anonymous function evaluation rule,
 if {x = 1, y = 4, z = 6} :: 6 -> 6
 and {x = 1, y = 4, z = 6} :: g -->> <<fun z -> 9 + z, {x = 1, y = 4}>>
 and {x = 1, y = 4} + {z = 6} :: 9 + z --> 15
@@ -73,12 +74,40 @@ This binds z to 15,
 creating environment {x=3, f=<<fun y -> K {x=1}>>, g = << fun z -> 9 + z, {x = 1, y = 4 }>>, y = 5, z = 15}
 
 if we call the last environment env,
-Then z is env(z) = 15.
+Then the last line, according to the variable evaluation rule, is
+if env(z) = 15
+then env :: z --> 15.
+
+The answer is 15.
 
 
+Karma:
+
+for nat_of_int
+the function binary represents int with a list of N.ones and N.zeros in the binary number system. O(log n)
+the function binary_to_nat reverses the binary list and multiplies the right 2**n natural number to the elements. the argument digit stores the right digit that must be added if the element is N.one. O(m)
+the result is a natural number of type N.t derived from a binary represenation of the natural number.
+O(log n)+O(m) where m = log n so overall, O (log n).
+
+for int_of_nat
+if wanted number = 0, return 0. else, we do the following.
+we will increase current by the appropriate 2**n (variable digit) until the current is larger than the wanted number.
+once the current number is larger than the wanted number, we start over at the same low and current = low +1.
+we keep doing this until the current number is equal to the wanted number. at this point, we return the current_int.
 
 
+example of how interval_finder works. (wanted is natural number representation of 11) pretend N.t = int
+11 low: 0 current:1 digit:1 current_int:1 digit_int 1 restart : 0
+11 low: 1 current:2 digit:2 current_int:2 digit_int 2 restart : 1
+11 low: 2 current:4 digit:4 current_int:4 digit_int 4 restart : 2
+11 low: 4 current:8 digit:8 current_int:8 digit_int 8 restart : 4
+11 low: 8 current:16 digit:16 current_int:16 digit_int 16 restart : 8
 
+11 low: 8 current:9 digit:1 current_int:9 digit_int 1 restart : 8
+11 low: 9 current: 10 digit:2 current_int:10 digit_int 2 restart 9
+11 low: 10 current:12 digit:4 current_int:12 digit_int 4 restart 10 
+
+11 low 10 current: 11 dig:1 current_int 11 digit_int 1 restart 10*)
 
 
 Problem 4:
@@ -87,4 +116,5 @@ Jay wrote code for 2.1.3 2.1.4 and 2.1.5. Madeleine wrote code for the rest of 2
 Both coded together on problem 3.
 Both traded off coding tests and adding code to each other's tests. 
 Jay did most of Problem 1.
+Jay tried the Karma problem.
 Madeleine did most of comments and style adjustment.
