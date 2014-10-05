@@ -179,8 +179,49 @@ end
 module NatConvertFn ( N : NATN ) = struct
     (*converts natural numbers of type N.t to an int*)
     let int_of_nat (n : N.t ): int = N.int_of_nat(n)
+
     (*converts ints to natural numbers of type N.t*)
-    let nat_of_int (n : int ): N.t = N.nat_of_int(n)
+    let nat_of_int (n : int ): N.t = N.nat_of_int(n) 
+       
+(* KARMA. compiles.
+    (*returns binary number system representation of n*)
+    let two = N.(+) N.one N.one 
+    let nat_of_int (n: int): N.t =
+      let rec binary (n: int) (acc: N.t list) : N.t list= 
+        if (n = 0) then acc
+        else if (n = 1) then (N.one::acc)
+        else 
+          if ((n mod 2) = 0 ) then binary (n/2) (N.zero::acc)
+          else
+            binary ((n-1)/2) (N.one::acc) in
+    (*returns natural number of the given binary representation of the number.*)
+      let rec binary_to_nat (binary: N.t list) (acc: N.t) (digit: N.t) : N.t=
+        let bi = List.rev(binary) in
+        match bi with
+         [] -> acc
+        |hd::tl -> if (N.(===) hd (N.one)) then 
+                     binary_to_nat tl (N.(+) acc digit) (N.( * ) digit two)
+                   else 
+                     binary_to_nat tl acc (N.( * ) digit two) in
+      let binary_rep = binary(n) [] in
+      binary_to_nat binary_rep N.zero N.one
+
+    let int_of_nat (n : N.t ): int = 
+      (*returns int of natural number n. description in written part.*)
+      let rec interval_finder (wanted: N.t) (low: N.t) (current: N.t) (digit: N.t) 
+          (current_int: int) (digit_int : int) (restart: int) : int
+      =
+        if (N.(===) wanted N.zero) then 0
+        else if (N.(===) wanted current) then current_int
+        else if (N.(<) current wanted) then
+          interval_finder wanted current (N.(+) current digit) (N.( * ) digit two)
+            (current_int + digit_int) (digit_int*2) current_int
+        else if (N.(<) wanted current) then
+          interval_finder wanted low (N.(+) low N.one) (N.one)
+            (restart + 1) 1 restart
+        else 
+          failwith "impossible" in
+      interval_finder n N.zero N.one N.one 1 1 0 *)
 
 end
 
