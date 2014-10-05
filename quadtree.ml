@@ -95,7 +95,7 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
       let coord_in_leaf = fst tuple_in_leaf in
       let obj_in_leaf = snd tuple_in_leaf in
       (*the strings that represent the quad that the objects are in*)
-      let quad_of_original_obj = quad_of_coords new_node (fst(tuple_in_leaf)) in
+      let quad_of_original_obj= quad_of_coords new_node (fst(tuple_in_leaf)) in
       let quad_of_inserting_obj =  quad_of_coords new_node c in
       (*inserts the original object in the right quadtree leaf
         requires a Node with four leaves*)
@@ -107,12 +107,12 @@ let insert (q: 'a quadtree) (c : coord) (s:'a) : 'a quadtree =
             raise (PreconditionNotMet "original_obj_inserted wants a Node") 
         |Node (reg, one, two, three, four) -> 
           match quad_string with
-          |"I" -> Node (reg, (insert_to_leaf one obj_c obj), two, three, four)
-          |"II" -> Node (reg, one, (insert_to_leaf two obj_c obj), three, four)
-          |"III" -> Node (reg, one, two, (insert_to_leaf three obj_c obj), four)
-          | _ -> Node (reg, one, two, three, (insert_to_leaf four obj_c obj)) in
+          |"I" -> Node (reg,(insert_to_leaf one obj_c obj), two, three, four)
+          |"II" -> Node (reg, one,(insert_to_leaf two obj_c obj), three, four)
+          |"III" -> Node (reg, one, two,(insert_to_leaf three obj_c obj), four)
+          | _ -> Node (reg, one, two, three,(insert_to_leaf four obj_c obj)) in
       (*the node now has the original object inserted in the right leaf*)
-      let node_w_orig_obj = insert_to_leaf_helper new_node quad_of_original_obj 
+      let node_w_orig_obj = insert_to_leaf_helper new_node quad_of_original_obj
                                 coord_in_leaf obj_in_leaf in
       (*match statement to bind the four leaves of the node*)
       insert_to_leaf_helper node_w_orig_obj quad_of_inserting_obj c s in
@@ -144,7 +144,7 @@ let rec fold_quad (f: 'a -> (coord * 'b)  -> 'a)
   match t with
    Leaf (reg, obj_lst) -> List.fold_left f a obj_lst
   |Node (reg, one, two, three, four) -> 
-    fold_quad f ( fold_quad f ( fold_quad f (fold_quad f a four) three) two) one
+    fold_quad f (fold_quad f (fold_quad f (fold_quad f a four) three) two) one
 
 (*precondition: r need not be in the region of the quadtree t.
   Folds the function argument over the quadtree, but only on objects

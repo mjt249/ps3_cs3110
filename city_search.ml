@@ -10,7 +10,7 @@ let load_city_data (s:string) : string quadtree =
   let city_trees : string quadtree = new_tree city_region in
   let city_lists : city list = parse s in
 
-  let rec insert_cities (lst_city : city list) (city_tree : string quadtree)  =
+  let rec insert_cities (lst_city : city list) (city_tree : string quadtree) =
      match lst_city with
      [] -> city_tree
      | hd::tl -> 
@@ -25,7 +25,8 @@ let load_city_data (s:string) : string quadtree =
 Postconditions: returns a list of the cities in the desired region of q*)
 let city_search (q: string quadtree) (r : region) : string list = 
   let add_city_strings (lst: string list) 
-    (city_tuple: coord * string) : string list =
+    (city_tuple: coord * string) : string list 
+  =
     let city = snd city_tuple in
     let coord_of_city = fst city_tuple in
     let latitude = string_of_float(fst coord_of_city) in
